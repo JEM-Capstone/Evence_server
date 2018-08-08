@@ -1,5 +1,5 @@
 {
-  "name": "boilermaker",
+  "name": "capstone",
   "version": "1.0.0",
   "description": "Some boilerplate code to get you started - get shakin'!",
   "engines": {
@@ -18,20 +18,16 @@
     "postinstall": "touch secrets.js",
     "seed": "node script/seed.js",
     "start": "node server",
-    "start-dev": "NODE_ENV='development' npm run build-client-watch & npm run start-server",
-    "start-server": "nodemon server -e html,js,scss --ignore public --ignore client",
-    "test": "NODE_ENV='test' mocha \"./server/**/*.spec.js\" \"./client/**/*.spec.js\" \"./script/**/*.spec.js\" --require @babel/polyfill --require @babel/register"
+    "start-dev":
+      "NODE_ENV='development' npm run build-client-watch & npm run start-server",
+    "start-server":
+      "nodemon server -e html,js,scss --ignore public --ignore client",
+    "test":
+      "NODE_ENV='test' mocha \"./server/**/*.spec.js\" \"./client/**/*.spec.js\" \"./script/**/*.spec.js\" --require @babel/polyfill --require @babel/register"
   },
   "lint-staged": {
-    "*.{js,jsx}": [
-      "prettier --write",
-      "npm run lint-fix",
-      "git add"
-    ],
-    "*.{css,scss,json,md}": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.{js,jsx}": ["prettier --write", "npm run lint-fix", "git add"],
+    "*.{css,scss,json,md}": ["prettier --write", "git add"]
   },
   "author": "Fullstack Academy of Code",
   "license": "MIT",
@@ -44,6 +40,7 @@
     "history": "^4.6.3",
     "morgan": "^1.8.1",
     "passport": "^0.3.2",
+    "passport-facebook": "^2.1.1",
     "passport-google-oauth": "^1.0.0",
     "pg": "^6.1.2",
     "pg-hstore": "^2.3.2",
