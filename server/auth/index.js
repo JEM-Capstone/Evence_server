@@ -42,4 +42,4 @@ router.get('/me', (req, res) => {
   res.json(req.user)
 })
 
-router.use('/facebook', require('./facebook'))
+router.use('/linkedin', require('./linkedin'))
