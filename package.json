@@ -1,6 +1,6 @@
 {
-  "name": "capstone",
-  "version": "1.0.0",
+  "name": "evence",
+  "version": "
   "description": "Some boilerplate code to get you started - get shakin'!",
   "engines": {
     "node": ">= 7.0.0"
