@@ -1,19 +1,19 @@
 const User = require('./user')
-const UserTopics = require('./userTopics')
-const UserGroups = require('./userGroups')
-const UserEvents = require('./userEvents')
-const RSVPs = require('./rsvps')
+const UserTopic = require('./userTopic')
+const UserGroup = require('./userGroup')
+const UserEvent = require('./userEvent')
+const Rsvp = require('./rsvp')
 
-User.hasMany(UserTopics)
-UserTopics.belongsTo(User)
+User.hasMany(UserTopic)
+UserTopic.belongsTo(User)
 
-User.hasMany(UserGroups)
-UserGroups.belongsTo(User)
+User.hasMany(UserGroup)
+UserGroup.belongsTo(User)
 
-User.hasMany(UserEvents)
-UserEvents.belongsTo(User)
+User.hasMany(UserEvent)
+UserEvent.belongsTo(User)
 
 
 module.exports = {
-  User, UserTopics, UserGroups
+  User, UserTopic, UserGroup, UserEvent, Rsvp
 }

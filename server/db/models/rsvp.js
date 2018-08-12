@@ -6,10 +6,10 @@ const db = require('../db')
 being saved on the event model, and this data just gets pulled and sent straight over
 to the linkedIn API */
 
-const RSVPs = db.define('rsvps', {
+const Rsvp = db.define('rsvp', {
   placeholder: {
     type: Sequelize.JSON,
   },
 })
 
-module.exports = RSVPs
+module.exports = Rsvp

@@ -1,10 +1,10 @@
 const Sequelize = require('sequelize')
 const db = require('../db')
 
-const UserEvents = db.define('userEvents', {
+const UserEvent = db.define('userEvent', {
   placeholder: {
     type: Sequelize.JSON,
   },
 })
 
-module.exports = UserEvents
+module.exports = UserEvent

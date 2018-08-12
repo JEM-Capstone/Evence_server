@@ -5,7 +5,7 @@ const db = require('../db')
 from the meetup API. they will be stored in the db with an association to that user's ID since
 these won't change or need to be queried very often */
 
-const UserTopics = db.define('userTopics', {
+const UserTopic = db.define('userTopic', {
   keyword1: {
     type: Sequelize.ARRAY(Sequelize.INTEGER),
     allowNull: true
@@ -36,4 +36,4 @@ const UserTopics = db.define('userTopics', {
   }
 })
 
-module.exports = UserTopics
+module.exports = UserTopic

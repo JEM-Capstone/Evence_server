@@ -10,7 +10,11 @@ const sessionStore = new SequelizeStore({db})
 const PORT = process.env.PORT || 8080
 const app = express()
 const socketio = require('socket.io')
+const graphqlHTTP = require(`express-graphql`);
+const mySchema = require(`./schema/schema`);
 module.exports = app
+
+
 
 // This is a global Mocha hook, used for resource cleanup.
 // Otherwise, Mocha v4+ never quits after tests.
@@ -66,6 +70,12 @@ const createApp = () => {
 
   app.use('/auth', require('./auth'))
   app.use('/api', require('./api'))
+
+  // GRAPH-I-QL
+  app.use(`/graphql`, graphqlHTTP({
+    schema: mySchema,
+    graphiql: true,
+  }));
 
   // static file-serving middleware
   app.use(express.static(path.join(__dirname, '..', 'public')))

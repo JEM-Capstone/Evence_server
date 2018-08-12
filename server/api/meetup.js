@@ -2,6 +2,8 @@ const router = require(`express`).Router();
 const chalk = require(`chalk`);
 const axios = require('axios')
 
+/* if you have questions about these routes, ask Evelyn */
+
 
 //NOTE: eventually need to hide the key e.g. fs.readFileSync('api_key.txt', 'utf-8');
 
@@ -13,18 +15,26 @@ const composeRequest = (method, qualifiers, base = 'https://api.meetup.com', key
 
 
 // api/meetup/topics
-router.get(`/topics`, async (req, res, next) => {
+router.get(`/ping`, async (req, res, next) => {
+  console.log("hitting this!!!!");
+const pong = 'pong'
+res.json({ pong })
+});
+
+// api/meetup/topics
+router.get(`/topics/:keyword/:userId`, async (req, res, next) => {
   try {
-    const query = 'design'// fake data for now...will need to get request specifics once hooked up to front end
-    // also, will need to use a regex to transform spaces between search words into "+"
+    const query = req.params.keyword
+    //^^^ NOTE: will need to use a regex to transform spaces between keyword phrases into "+" here or before it even gets here
     const method = `/find/topics`
     const qualifiers = `&query=${query}&page=10&only=group_count,name,id`
+    // TODO: need to sort these by group_count
+
     console.log(chalk.green(`gettin stuff from meetup.com....`));
     console.log(chalk.bgBlue(`querying endpoint: ${composeRequest(method, qualifiers)}`));
-
     const { data } = await axios.get(composeRequest(method, qualifiers))
 
-    // TODO: push only ids that have a group_count > 20 to db table userTopics
+    // TODO: push only ids that have a group_count > 20? 50? to db table userTopics
 
     res.json(data)
   } catch (err) {
@@ -35,18 +45,18 @@ router.get(`/topics`, async (req, res, next) => {
 
 
 // api/meetup/groups
-router.get(`/groups`, async (req, res, next) => {
+// we'll need to hit this endpoint multiple times, once for each topicId
+router.get(`/groups/:topicId/:city/:userId`, async (req, res, next) => {
   try {
-    const topicId = '16325' /* stand-in, will need to receive from the request. needs to be the group id coming
-    from the topics (comma delimited no spaces if multiple, but thinking we'll need to do individually) */
-    const userCity = 'Chicago' //stand-in data, will need to receive from the request
+    const topicId = req.params.topicId //'16325'
+    const userCity = req.params.city //'Chicago'
     const method = `/find/groups`
     const qualifiers = `&upcoming_events=true&fallback_suggestions=true&location=${userCity}&topic_id=${topicId}
     &radius=smart&page=10&only=next_event,members,urlname,name,id`
     //^^^looks like their "next_event=true" doesn't always work as intended so may need to filter on our end b4 saving to db
+
     console.log(chalk.green(`gettin stuff from meetup.com....`));
     console.log(chalk.bgBlue(`querying endpoint: ${composeRequest(method, qualifiers)}`));
-
     const { data } = await axios.get(composeRequest(method, qualifiers))
 
     //TODO: Save to DB along with user ID
@@ -60,10 +70,10 @@ router.get(`/groups`, async (req, res, next) => {
 
 
 // api/meetup/event
-router.get(`/event`, async (req, res, next) => {
+router.get(`/event/:group/:eventId/:userId`, async (req, res, next) => {
   try {
-    const groupUrlName = 'sketch_up' // stand-in, will need to receive from the request
-    const eventId = '252570431' //stand-in, will need to receive from the request
+    const groupUrlName = req.params.group //'sketch_up'
+    const eventId = req.params.eventId //'252570431'
     const method = `/${groupUrlName}/events/${eventId}`
     const qualifiers = '&fields=rsvp_sample,event_hosts,fee,web_actions,past_event_count_inclusive,featured_photo'
     /* ^^^added in useful fields from API documentation. RSVP sample may be necessary if group is private and
@@ -83,10 +93,10 @@ router.get(`/event`, async (req, res, next) => {
 });
 
 // api/meetup/rsvps
-router.get(`/rsvps`, async (req, res, next) => {
+router.get(`/rsvps/:group/:eventId/:userId`, async (req, res, next) => {
   try {
-    const groupUrlName = 'UXSCHICAGO' // stand-in, will need to receive from the request
-    const eventId = '253358683' //stand-in, will need to receive from the request
+    const groupUrlName = req.params.group // 'UXSCHICAGO'
+    const eventId = req.params.eventId // '253358683'
     const method = `/${groupUrlName}/events/${eventId}/rsvps`
     const qualifiers = '&order=name&only=member'
     /* ^^^will need to filter for those that have names, and for those with first AND last name listed before sending
