@@ -1,6 +1,6 @@
 {
   "name": "evence",
-  "version": "
+  "version": "0.0.1",
   "description": "Some boilerplate code to get you started - get shakin'!",
   "engines": {
     "node": ">= 7.0.0"
