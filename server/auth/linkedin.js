@@ -67,13 +67,15 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
       successRedirect: '/auth/linkedin/redirect',
       failureRedirect: '/login'
     }), async (req, res, next) => {
-        // console.log('auth/linkedin/callback', req)
+        // console.log(req.user.dataValues)
+        res.send(req.user.dataValues)
         next()
   })
 
   // Redirect the user back to the
   router.get('/redirect', async (req, res, next) => {
-    console.log(req)
+    console.log(req.user.dataValues)
+    // const email = req.user.dataValues.email
     res.redirect('exp://8k-xp5.veryspry.evence.exp.direct:80')
   })
 
