@@ -1,4 +1,5 @@
 const router = require(`express`).Router();
+const { User, Topic, UserGroup, UserEvent } = require(`../db/models/index`);
 const chalk = require(`chalk`);
 const axios = require('axios')
 
@@ -14,7 +15,7 @@ const composeRequest = (method, qualifiers, base = 'https://api.meetup.com', key
 }
 
 
-// api/meetup/topics
+// api/meetup/ping
 router.get(`/ping`, async (req, res, next) => {
   console.log("hitting this!!!!");
 const pong = 'pong'
@@ -24,17 +25,29 @@ res.json({ pong })
 // api/meetup/topics
 router.get(`/topics/:keyword/:userId`, async (req, res, next) => {
   try {
-    const query = req.params.keyword
+    const keyword = req.params.keyword
+    const userId = req.params.userId
     //^^^ NOTE: will need to use a regex to transform spaces between keyword phrases into "+" here or before it even gets here
+
     const method = `/find/topics`
-    const qualifiers = `&query=${query}&page=10&only=group_count,name,id`
-    // TODO: need to sort these by group_count
+    const qualifiers = `&query=${keyword}&page=10&only=group_count,name,id`
 
     console.log(chalk.green(`gettin stuff from meetup.com....`));
     console.log(chalk.bgBlue(`querying endpoint: ${composeRequest(method, qualifiers)}`));
     const { data } = await axios.get(composeRequest(method, qualifiers))
 
-    // TODO: push only ids that have a group_count > 20? 50? to db table userTopics
+    // keep only topic id that have associated group_counts > 50
+    const filteredData = data.filter(item => item.group_count > 50)
+    // grab only the ids for the DB
+    const topicArray = filteredData.map(item => item.id)
+
+    if (topicArray.length) {
+      const [ topics, wasCreated ] = await Topic.findOrCreate({
+        where: { keyword: keyword },
+        defaults: {topics: topicArray}
+      })
+      console.log(chalk.magenta('Saving the following topic ids to the DB:', JSON.stringify(topics)));
+    } else (console.log(chalk.magenta('No active topics found for this keyword')))
 
     res.json(data)
   } catch (err) {
@@ -59,7 +72,8 @@ router.get(`/groups/:topicId/:city/:userId`, async (req, res, next) => {
     console.log(chalk.bgBlue(`querying endpoint: ${composeRequest(method, qualifiers)}`));
     const { data } = await axios.get(composeRequest(method, qualifiers))
 
-    //TODO: Save to DB along with user ID
+    // TODO: Save to DB along with user ID
+    // Make sure that eventId getter method on the model is working....
 
     res.json(data)
   } catch (err) {

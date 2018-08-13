@@ -14,6 +14,13 @@ const UserGroup = db.define('userGroup', {
   members: {
     type: Sequelize.INTEGER,
   },
+  nextEventId: {
+    type: Sequelize.STRING,
+    get(){
+      const event = this.getDataValue('nextEvent')
+      return event.id
+    }
+  },
   nextEvent: {
     type: Sequelize.JSON,
   },
