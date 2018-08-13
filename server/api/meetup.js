@@ -3,8 +3,7 @@ const { User, Topic, UserGroup, UserEvent } = require(`../db/models/index`);
 const chalk = require(`chalk`);
 const axios = require('axios')
 
-/* if you have questions about these routes, ask Evelyn */
-
+/* for questions about these routes, ask Evelyn */
 
 //NOTE: eventually need to hide the key e.g. fs.readFileSync('api_key.txt', 'utf-8');
 
@@ -14,20 +13,22 @@ const composeRequest = (method, qualifiers, base = 'https://api.meetup.com', key
   return request
 }
 
-
-// api/meetup/ping
-router.get(`/ping`, async (req, res, next) => {
-  console.log("hitting this!!!!");
-const pong = 'pong'
-res.json({ pong })
+// api/meetup/ping (for testing connection to frontend)
+router.get(`/ping`, (req, res, next) => {
+  try {
+    console.log(chalk.inverse('....backend reached'));
+    const pong = 'pong'
+    res.json({ pong })
+  } catch (err) {
+    console.log(chalk.red(err));
+  }
 });
 
-// api/meetup/topics
+// api/meetup/topics ---> only drop after linkedIn auth token refresh ~60 days
 router.get(`/topics/:keyword/:userId`, async (req, res, next) => {
   try {
-    const keyword = req.params.keyword
+    const keyword = req.params.keyword // going to recommend only have single word keywords
     const userId = req.params.userId
-    //^^^ NOTE: will need to use a regex to transform spaces between keyword phrases into "+" here or before it even gets here
 
     const method = `/find/topics`
     const qualifiers = `&query=${keyword}&page=10&only=group_count,name,id`
@@ -46,8 +47,8 @@ router.get(`/topics/:keyword/:userId`, async (req, res, next) => {
         where: { keyword: keyword },
         defaults: {topics: topicArray}
       })
-      console.log(chalk.magenta('Saving the following topic ids to the DB:', JSON.stringify(topics)));
-    } else (console.log(chalk.magenta('No active topics found for this keyword')))
+      console.log(chalk.green('Saving the following topic ids to the DB:', JSON.stringify(topics)));
+    } else (console.log(chalk.yellow('No active topics found for this keyword, not saving anything.')))
 
     res.json(data)
   } catch (err) {
@@ -57,24 +58,33 @@ router.get(`/topics/:keyword/:userId`, async (req, res, next) => {
 });
 
 
-// api/meetup/groups
-// we'll need to hit this endpoint multiple times, once for each topicId
+// api/meetup/groups --> drop table after ...?
+// we'll need to hit this endpoint multiple times per person, once for each topicId
+// each topidId creates miltiple instances of groups in the userGroups table
 router.get(`/groups/:topicId/:city/:userId`, async (req, res, next) => {
   try {
     const topicId = req.params.topicId //'16325'
-    const userCity = req.params.city //'Chicago'
+    const userCity = req.params.city //'Chicago' 'New+York' //NOTE '+'
     const method = `/find/groups`
     const qualifiers = `&upcoming_events=true&fallback_suggestions=true&location=${userCity}&topic_id=${topicId}
     &radius=smart&page=10&only=next_event,members,urlname,name,id`
-    //^^^looks like their "next_event=true" doesn't always work as intended so may need to filter on our end b4 saving to db
 
     console.log(chalk.green(`gettin stuff from meetup.com....`));
     console.log(chalk.bgBlue(`querying endpoint: ${composeRequest(method, qualifiers)}`));
     const { data } = await axios.get(composeRequest(method, qualifiers))
 
-    // TODO: Save to DB along with user ID
-    // Make sure that eventId getter method on the model is working....
-
+    // Save to DB along with user ID
+    for (const item of data) {
+    await UserGroup.create({
+      groupId: item.id,
+      displayName: item.name,
+      urlName: item.urlname,
+      members: item.members,
+      nextEventId: item.next_event.id,
+      userId: req.params.userId
+    })
+    }
+    console.log(chalk.green(`groups have been saved to the database!`));
     res.json(data)
   } catch (err) {
     console.log(chalk.red(err));
@@ -83,28 +93,54 @@ router.get(`/groups/:topicId/:city/:userId`, async (req, res, next) => {
 });
 
 
-// api/meetup/event
-router.get(`/event/:group/:eventId/:userId`, async (req, res, next) => {
+// api/meetup/events --> drop table after ...?
+// will need to be called for each instance in groups table on that group's 'next event'
+// all info needed for list & single event view (pull only what you need on front end)
+router.get(`/events/:group/:eventId/:userId`, async (req, res, next) => {
   try {
     const groupUrlName = req.params.group //'sketch_up'
     const eventId = req.params.eventId //'252570431'
     const method = `/${groupUrlName}/events/${eventId}`
-    const qualifiers = '&fields=rsvp_sample,event_hosts,fee,web_actions,past_event_count_inclusive,featured_photo'
-    /* ^^^added in useful fields from API documentation. RSVP sample may be necessary if group is private and
-    can't see full attendence list(if we can see if someone is in-network to the user) */
+    const qualifiers = '&fields=event_hosts,fee,web_actions,past_event_count_inclusive,featured_photo'
     console.log(chalk.green(`gettin stuff from meetup.com....`));
     console.log(chalk.bgBlue(`querying endpoint: ${composeRequest(method, qualifiers)}`));
 
     const { data } = await axios.get(composeRequest(method, qualifiers))
 
-    //TODO: Save to DB
+    const event = await UserEvent.create({
+      eventName: data.name,
+      eventId: data.id,
+      photo: data.featured_photo.photo_link,
+      eventGroup: data.group.name,
+      date: data.local_date,
+      time: data.local_time,
+      eventCity: data.group.localized_location,
+      rsvps: data.yes_rsvp_count,
+      venueName: data.venue.name,
+      venueAddress: data.venue.address_1,
+      fee: data.fee.amount,
+      description: data.description,
+      webActions: [data.web_actions.calendar_export_google, data.web_actions.calendar_export_ical,
+      data.web_actions.calendar_export_outlook],
+      directLink: data.link,
+      pastEvents: data.past_event_count_inclusive,
+      hosts: data.event_hosts.map(host => [host.name, host.id, host.photo.photo_link]),
+      userId: req.params.userId
+    })
 
+    console.log(chalk.green(`EVENT:${event.eventName} has been saved to the database!`));
     res.json(data)
   } catch (err) {
     console.log(chalk.red(err));
     res.status(500).send(err);
   }
 });
+
+
+
+
+
+// >>>>>>>>>> NOT YET IN USE >>>>>>>>>>>>>
 
 // api/meetup/rsvps
 router.get(`/rsvps/:group/:eventId/:userId`, async (req, res, next) => {
@@ -131,10 +167,3 @@ router.get(`/rsvps/:group/:eventId/:userId`, async (req, res, next) => {
 
 
 module.exports = router;
-
-
-// >>>>>>>>>>>> NOTES <<<<<<<<<<<<<<< //
-/* recommend by both QUALITY & RELEVANCE to the user */
-// if not enough, can use GET /:urlname/similar_groups */
-
-// console.log(composeRequest('/2/categories', '&page=5'))

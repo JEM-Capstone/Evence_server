@@ -31,7 +31,7 @@ const RootQuery = new GraphQLObjectType({
   fields: {
     userTopic: { // this names the query for frontend usage
       type: TopicType,
-      args: { id: { type: GraphQLID } }, // what you'll use to look up individual products (id)
+      args: { id: { type: GraphQLID } }, // what you'll use to look up individual topics
       resolve(root, args) { // code to get data from db or other source (e.g. linkedIn api)
         return Topic.findById(args.id);
       },
