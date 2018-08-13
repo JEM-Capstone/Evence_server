@@ -1,46 +1,132 @@
 const graphql = require(`graphql`);
-const { User, Topic, UserGroup, UserEvent } = require(`../db/index`);
+const { User, Topic, UserGroup, UserEvent, UserTopic } = require(`../db/models/index`);
 
 const {
   GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLID, GraphQLInt, GraphQLList
 } = graphql;
 
-const TopicType = new GraphQLObjectType({
-  name: `Topic`,
+const UserType = new GraphQLObjectType({
+  name: `user`,
   fields: () => ({
     id: { type: GraphQLID },
-    keyword: { type: GraphQLString },
-    topics: { type: GraphQLList },
+    email: { type: GraphQLString },
+    events: {
+      type: new GraphQLList(EventType),
+      resolve(root, args){
+        return UserEvent.findAll({ where: { userId: root.id } })
+      }
+    },
+    groups: {
+      type: new GraphQLList(GroupType),
+      resolve(root, args){
+        return UserGroup.findAll({ where: { userId: root.id } })
+      }
+    },
+    topics: {
+      type: new GraphQLList(UserTopicType),
+      resolve(root, args){
+        return UserTopic.findAll({ where: { userId: root.id } })
+      }
+    }
+  })
+});
+
+const UserTopicType = new GraphQLObjectType({
+  name: `userTopic`,
+  fields: () => ({
+    userId: { type: GraphQLID },
+    topicId: { type: GraphQLID },
   }),
 });
 
-const UserGroupType = new GraphQLObjectType({
-  name: `UserGroup`,
+const TopicType = new GraphQLObjectType({
+  name: `topic`,
+  fields: () => ({
+    id: { type: GraphQLID },
+    keyword: { type: GraphQLString },
+    topics: { type: new GraphQLList(GraphQLString) },
+  }),
+});
+
+const GroupType = new GraphQLObjectType({
+  name: `group`,
   fields: () => ({
     id: { type: GraphQLID },
     groupId: { type: GraphQLString },
+    displayName: { type: GraphQLString },
     urlName: {type: GraphQLString},
     members: {type: GraphQLInt},
-    nextEventId: {type: GraphQLString}
+    nextEventId: {type: GraphQLString},
+    user: {
+      type: UserType,
+      resolve(root, args) {
+        return User.findById(root.userId)
+      }
+    }
   }),
 });
+
+const EventType = new GraphQLObjectType({
+  name: `event`,
+  fields: () => ({
+    id: { type: GraphQLID },
+    eventName: { type: GraphQLString },
+    eventId: { type: GraphQLString },
+    photo: { type: GraphQLString },
+    eventGroup: { type: GraphQLString },
+    date: { type: GraphQLString },
+    time: { type: GraphQLString },
+    eventCity: { type: GraphQLString },
+    rsvps: { type: GraphQLInt },
+    venueName: { type: GraphQLString },
+    venueAddress: { type: GraphQLString },
+    fee: { type: GraphQLInt },
+    description: { type: GraphQLString },
+    webActions: { type: new GraphQLList(GraphQLString) },
+    directLink: { type: GraphQLString },
+    pastEvents: { type: GraphQLInt },
+    hosts: { type: new GraphQLList(GraphQLString) },
+  }),
+});
+
 
 
 const RootQuery = new GraphQLObjectType({
   name: `RootQueryType`,
   fields: {
-    userTopic: { // this names the query for frontend usage
+    user: { // this names the query for frontend usage
+      type: UserType,
+      args: { id: { type: GraphQLID } },
+      resolve(root, args) {
+        return User.findById(args.id)
+      }
+    },
+    topic: { // this names the query for frontend usage
       type: TopicType,
       args: { id: { type: GraphQLID } }, // what you'll use to look up individual topics
-      resolve(root, args) { // code to get data from db or other source (e.g. linkedIn api)
+      resolve(root, args) {
         return Topic.findById(args.id);
       },
     },
-    userGroup: {
-      type: UserGroupType,
+    group: {
+      type: GroupType,
       args: { id: { type: GraphQLID } },
       resolve(root, args) {
         return UserGroup.findById(args.id);
+      },
+    },
+    userTopic: {
+      type: UserTopicType,
+      args: { id: { type: GraphQLID } },
+      resolve(root, args) {
+        return UserTopic.findById(args.userId);
+      },
+    },
+    event: {
+      type: EventType,
+      args: { id: { type: GraphQLID } },
+      resolve(root, args) {
+        return UserEvent.findById(args.id);
       },
     },
   },

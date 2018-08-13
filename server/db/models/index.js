@@ -15,5 +15,5 @@ UserEvent.belongsTo(User)
 
 
 module.exports = {
-  User, Topic, UserGroup, UserEvent
+  User, Topic, UserGroup, UserEvent, UserTopic
 }

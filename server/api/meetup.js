@@ -73,9 +73,11 @@ router.get(`/groups/:topicId/:city/:userId`, async (req, res, next) => {
     console.log(chalk.bgBlue(`querying endpoint: ${composeRequest(method, qualifiers)}`));
     const { data } = await axios.get(composeRequest(method, qualifiers))
 
+    const filteredData = data.filter(item => item.next_event) //their only=next_event isn't working
+
     // Save to DB along with user ID
-    for (const item of data) {
-    await UserGroup.create({
+    for (const item of filteredData) {
+    await UserGroup.create({ //TODO: make this findOrCreate using groupId & userId so you don't get duplicates
       groupId: item.id,
       displayName: item.name,
       urlName: item.urlname,
@@ -84,8 +86,8 @@ router.get(`/groups/:topicId/:city/:userId`, async (req, res, next) => {
       userId: req.params.userId
     })
     }
-    console.log(chalk.green(`groups have been saved to the database!`));
-    res.json(data)
+    console.log(chalk.green(`groups may or may not have been saved to the database!`));
+    res.json(filteredData)
   } catch (err) {
     console.log(chalk.red(err));
     res.status(500).send(err);
@@ -107,10 +109,10 @@ router.get(`/events/:group/:eventId/:userId`, async (req, res, next) => {
 
     const { data } = await axios.get(composeRequest(method, qualifiers))
 
-    const event = await UserEvent.create({
+    const event = await UserEvent.create({ //TODO: make this findOrCreate using eventId & userId so you don't get duplicates
       eventName: data.name,
       eventId: data.id,
-      photo: data.featured_photo.photo_link,
+      photo: data.featured_photo ? data.featured_photo.photo_link : null,
       eventGroup: data.group.name,
       date: data.local_date,
       time: data.local_time,
@@ -118,17 +120,17 @@ router.get(`/events/:group/:eventId/:userId`, async (req, res, next) => {
       rsvps: data.yes_rsvp_count,
       venueName: data.venue.name,
       venueAddress: data.venue.address_1,
-      fee: data.fee.amount,
+      fee: data.fee ? data.fee.amount : null,
       description: data.description,
       webActions: [data.web_actions.calendar_export_google, data.web_actions.calendar_export_ical,
       data.web_actions.calendar_export_outlook],
       directLink: data.link,
       pastEvents: data.past_event_count_inclusive,
-      hosts: data.event_hosts.map(host => [host.name, host.id, host.photo.photo_link]),
+      hosts: data.event_hosts.map(host => [host.name, host.id, host.photo ? host.photo.photo_link : null]),
       userId: req.params.userId
     })
 
-    console.log(chalk.green(`EVENT:${event.eventName} has been saved to the database!`));
+    console.log(chalk.green(`EVENT: "${event.eventName}" has been saved to the database!`));
     res.json(data)
   } catch (err) {
     console.log(chalk.red(err));
