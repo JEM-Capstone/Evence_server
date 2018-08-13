@@ -50,16 +50,31 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
     res.redirect('/')
   })
 
-  router.get('/', passport.authenticate('linkedin'), function(req, res) {
+  router.get('/', passport.authenticate('linkedin', (err, user, info) => {
+    if (err) { return next(err) }
+    console.log('the user', user)
+    console.log('the info', info)
+
+  }), async (req, res, next) => {
     // The request will be redirected to LinkedIn for authentication, so this
     // function will not be called.
+    console.log('auth/linkedin',req)
+    res.redirect('/')
+    next()
   })
 
-  router.get(
-    '/callback',
-    passport.authenticate('linkedin', {
-      successRedirect: '/',
+  router.get('/callback', passport.authenticate('linkedin', {
+      successRedirect: '/auth/linkedin/redirect',
       failureRedirect: '/login'
-    })
-  )
+    }), async (req, res, next) => {
+        // console.log('auth/linkedin/callback', req)
+        next()
+  })
+
+  // Redirect the user back to the
+  router.get('/redirect', async (req, res, next) => {
+    console.log(req)
+    res.redirect('exp://8k-xp5.veryspry.evence.exp.direct:80')
+  })
+
 }
