@@ -13,7 +13,7 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
     clientID: process.env.LINKEDIN_CLIENT_ID,
     clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
     callbackURL: process.env.LINKEDIN_CALLBACK,
-    scope: ['r_emailaddress', 'r_fullprofile'],
+    scope: ['r_emailaddress', 'r_basicprofile'],
     state: true
   }
   const strategy = new LinkedInStrategy(
@@ -25,12 +25,13 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
       const email = profile._json.emailAddress
       const industry = profile._json.industry
       const linkedinToken = accessToken
-      console.log(' this is the profile from linkedin', profile._json)
-      console.log('this is the access token:', accessToken)
-      console.log('this is the refreshToken:', refreshToken)
+      // console.log(' this is the profile from linkedin', profile._json)
+      // console.log('this is the access token:', accessToken)
+      // console.log('this is the refreshToken:', refreshToken)
+      console.log('linkedinId', linkedinId)
       User.findOrCreate({
         where: {linkedinId},
-        defaults: {name, email}
+        defaults: {nameFirst, nameLast, email, industry, linkedinToken}
       })
         // asynchronous verification, for effect...
         .then(() => {
@@ -42,7 +43,12 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
 
   passport.use(strategy)
 
-  refresh.use(strategy)
+  // refresh.use(strategy)
+
+  router.get('/logout', function(req, res) {
+    req.logout()
+    res.redirect('/')
+  })
 
   router.get('/', passport.authenticate('linkedin'), function(req, res) {
     // The request will be redirected to LinkedIn for authentication, so this
