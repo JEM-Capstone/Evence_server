@@ -25,13 +25,32 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
       const email = profile._json.emailAddress
       const industry = profile._json.industry
       const linkedinToken = accessToken
+      const headline = profile._json.headline
+      const area = profile._json.location.name
+      const numConnections = profile._json.numConnections
+      const positions = profile._json.positions._total
+      const summary = profile._json.summary
+      const picUrl = profile._json.pictureUrl
       // console.log(' this is the profile from linkedin', profile._json)
       // console.log('this is the access token:', accessToken)
       // console.log('this is the refreshToken:', refreshToken)
       console.log('linkedinId', linkedinId)
+      console.log('positions', profile._json.positions)
       User.findOrCreate({
         where: {linkedinId},
-        defaults: {nameFirst, nameLast, email, industry, linkedinToken}
+        defaults: {
+          nameFirst,
+          nameLast,
+          email,
+          industry,
+          linkedinToken,
+          headline,
+          area,
+          numConnections,
+          positions,
+          summary,
+          picUrl
+        }
       })
         // asynchronous verification, for effect...
         .then(() => {

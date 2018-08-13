@@ -38,6 +38,24 @@ const User = db.define('user', {
   },
   linkedinId: {
     type: Sequelize.STRING
+  },
+  headline: {
+    type: Sequelize.TEXT
+  },
+  area: {
+    type: Sequelize.STRING
+  },
+  numConnections: {
+    type: Sequelize.INTEGER
+  },
+  positions: {
+    type: Sequelize.INTEGER
+  },
+  summary: {
+    type: Sequelize.TEXT
+  },
+  picUrl: {
+    type: Sequelize.STRING
   }
 })
 
