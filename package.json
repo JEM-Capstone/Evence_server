@@ -1,6 +1,6 @@
 {
   "name": "evence",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Some boilerplate code to get you started - get shakin'!",
   "engines": {
     "node": ">= 7.0.0"
@@ -40,7 +40,9 @@
     "compression": "^1.7.3",
     "connect-session-sequelize": "^4.1.0",
     "express": "^4.16.3",
+    "express-graphql": "^0.6.12",
     "express-session": "^1.15.1",
+    "graphql": "^0.13.2",
     "history": "^4.6.3",
     "morgan": "^1.8.1",
     "passport": "^0.3.2",

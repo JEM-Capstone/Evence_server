@@ -10,7 +10,11 @@ const sessionStore = new SequelizeStore({db})
 const PORT = process.env.PORT || 8080
 const app = express()
 const socketio = require('socket.io')
+const graphqlHTTP = require(`express-graphql`);
+const mySchema = require(`./schema/schema`);
 module.exports = app
+
+
 
 // This is a global Mocha hook, used for resource cleanup.
 // Otherwise, Mocha v4+ never quits after tests.
@@ -30,11 +34,13 @@ if (process.env.NODE_ENV !== 'production') require('../secrets')
 
 // passport registration
 passport.serializeUser((user, done) => {
+  console.log('hey we serializing now')
   done(null, user.id)
 })
 
 passport.deserializeUser(async (id, done) => {
   try {
+    console.log('hey we deserializing now')
     const user = await db.models.user.findOne({where: {linkedinId: id}})
     done(null, user)
   } catch (err) {
@@ -67,6 +73,12 @@ const createApp = () => {
 
   app.use('/auth', require('./auth'))
   app.use('/api', require('./api'))
+
+  // GRAPH-I-QL
+  app.use(`/graphql`, graphqlHTTP({
+    schema: mySchema,
+    graphiql: true,
+  }));
 
   // static file-serving middleware
   app.use(express.static(path.join(__dirname, '..', 'public')))
@@ -106,11 +118,11 @@ const startListening = () => {
   require('./socket')(io)
 }
 
-// const syncDb = () => db.sync()
+const syncDb = () => db.sync() //{force:true}
 
 async function bootApp() {
   await sessionStore.sync()
-  //   await syncDb()
+    await syncDb()
   await createApp()
   await startListening()
 }
