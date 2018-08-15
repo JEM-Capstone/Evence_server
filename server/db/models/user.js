@@ -49,7 +49,7 @@ const User = db.define('user', {
     type: Sequelize.INTEGER
   },
   positions: {
-    type: Sequelize.INTEGER
+    type: Sequelize.INTEGER // possible to get these names?
   },
   summary: {
     type: Sequelize.TEXT
