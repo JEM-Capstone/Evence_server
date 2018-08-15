@@ -12,7 +12,7 @@ const composeRequest = (
   method,
   qualifiers,
   base = 'https://api.meetup.com',
-  key = '425d347f87c647b636645757a406'
+  key = '501581a6f6f646d7f155b3b1f165a5d'
 ) => {
   const request = base + method + '?key=' + key + '&sign=true' + qualifiers
   return request
@@ -27,6 +27,13 @@ router.get(`/ping`, (req, res, next) => {
   } catch (err) {
     console.log(chalk.red(err))
   }
+})
+
+// TEST ROUTE
+router.get('/find/upcoming_events', async (req, res, next) => {
+  let data = await axios.get('https://api.meetup.com/find/upcoming_events?photo-host=public&page=100&text=cars&sig_id=259586855&radius=20&sig=398a605f8dfa730a65629e0d71519274817b2e0a')
+  console.log(data.data.events[0])
+  res.send(data)
 })
 
 // api/meetup/topics ---> only drop after linkedIn auth token refresh ~60 days
