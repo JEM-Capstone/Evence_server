@@ -1,5 +1,4 @@
-const dictionary = {
-  business: 'business',
+const dictionary = { business: 'business',
   marketing: 'business',
   finance: 'business',
   office: 'business',
@@ -41,6 +40,21 @@ const dictionary = {
   backend: 'computer software',
   fullstack: 'computer software',
   develop: 'computer software',
+  developer: 'computer software',
+  applications: 'computer software',
+  app: 'computer software',
+  apps: 'computer software',
+  developing: 'computer software',
+  engineer: 'computer software',
+  js: 'computer software',
+  design: 'computer software',
+  'node.js': 'computer software',
+  postgres: 'computer software',
+  database: 'computer software',
+  postico: 'computer software',
+  mongo: 'computer software',
+  mongodb: 'computer software',
+  build: 'computer software',
   security: 'computer network security',
   firewall: 'computer network security',
   proxy: 'computer network security',
@@ -54,8 +68,7 @@ const dictionary = {
   xss: 'computer network security',
   tech: 'tech',
   computers: 'tech',
-  code: 'tech',
-}
+  code: 'tech' }
 
 const commonWords = { the: true,
   of: true,

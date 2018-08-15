@@ -34,7 +34,12 @@ const build = {
       games: ['video', 'gaming', 'gamer', 'player'],
       hardware: ['motherboar', 'harddrive', 'repair', 'ram', 'card', 'disk'],
       networking: ['cable', 'LAN', 'modem', 'router', 'internet' ],
-      software: ['programming', 'coding', 'javascript', 'python', 'react', 'program', 'reactnative', 'express', 'node', 'css', 'client', 'frontend', 'backend', 'fullstack', 'develop'],
+      software: ['programming', 'coding', 'javascript', 'python', 'react',
+      'program', 'reactnative', 'express', 'node', 'css', 'client',
+      'frontend', 'backend', 'fullstack', 'develop', 'developer',
+      'applications', 'app', 'apps', 'developing', 'engineer', 'js',
+      'design', 'node.js', 'postgres', 'database', 'postico', 'mongo',
+      'mongodb', 'build'],
       network : {
         security: ['firewall', 'proxy', 'antivirus', 'malware', 'virus', 'infected', 'hacker', 'attck', 'ddos', 'xss']
       }
