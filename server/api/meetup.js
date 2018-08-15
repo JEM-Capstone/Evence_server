@@ -29,13 +29,6 @@ router.get(`/ping`, (req, res, next) => {
   }
 })
 
-// TEST ROUTE
-router.get('/find/upcoming_events', async (req, res, next) => {
-  let data = await axios.get('https://api.meetup.com/find/upcoming_events?photo-host=public&page=100&text=cars&sig_id=259586855&radius=20&sig=398a605f8dfa730a65629e0d71519274817b2e0a')
-  console.log(data.data.events[0])
-  res.send(data)
-})
-
 // api/meetup/topics ---> only drop after linkedIn auth token refresh ~60 days
 router.get(`/topics/:keyword/:userId`, async (req, res, next) => {
   try {

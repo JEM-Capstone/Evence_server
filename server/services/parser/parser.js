@@ -47,11 +47,20 @@ const sortCategories = (obj) => {
 // get the top categories
 // takes an array of sorted arrays
 // returns an array of strings
+// any multiple word string gets a plus add to any whitespace for compatibility with meetup's api
 const getTopCategories = (arr) => {
   let numCategories = 3
   let topCategories = []
   for (let i=0; i<numCategories; i++) {
-    topCategories.push(arr[i][0])
+    // let regex = /\s*/
+    // let word = arr[i][0].replace(regex, '+')
+    // console.log(word)
+    // make a regex to check AGAINST
+    // replace whitespace with +
+    // string.replace
+
+    let word = arr[i][0].split(' ').join('+')
+    topCategories.push(word)
   }
   return topCategories
 }
@@ -65,10 +74,6 @@ const parser = (summary, headline) => {
 }
 
 
-
-// console.log('categories', selectedCategories)
-// console.log('sorted', sortedCategories)
-// console.log('top', getCategories)
 console.log('top', parser(summary, headline))
 
 module.exports = parser
