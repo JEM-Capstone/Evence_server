@@ -5,7 +5,7 @@ const UserEvent = db.define('userEvent', {
   eventName: {
     type: Sequelize.STRING,
   },
-  eventId: {
+  eventId: { //meetup eventId - change name
     type: Sequelize.STRING,
   },
   photo: {

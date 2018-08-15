@@ -1,5 +1,5 @@
 const router = require(`express`).Router()
-const {User, Topic, UserGroup, UserEvent} = require(`../db/models/index`)
+const { User, Topic, UserGroup, UserEvent } = require(`../db/models/index`)
 const chalk = require(`chalk`)
 const axios = require('axios')
 
