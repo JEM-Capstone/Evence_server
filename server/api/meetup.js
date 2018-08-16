@@ -2,6 +2,7 @@ const router = require(`express`).Router()
 const {User, Topic, UserGroup, UserEvent} = require(`../db/models/index`)
 const chalk = require(`chalk`)
 const axios = require('axios')
+const topicFilter = require('../services/index')
 
 /* for questions about these routes, ask Evelyn */
 
@@ -36,7 +37,7 @@ router.get(`/topics/:keyword/:userId`, async (req, res, next) => {
     const userId = req.params.userId
 
     const method = `/find/topics`
-    const qualifiers = `&query=${keyword}&page=10&only=group_count,name,id`
+    const qualifiers = `&query=${keyword}&page=200&only=group_count,name,id,member_count`
 
     console.log(chalk.green(`gettin stuff from meetup.com....`))
     console.log(
@@ -67,7 +68,11 @@ router.get(`/topics/:keyword/:userId`, async (req, res, next) => {
         )
       )
 
+      // let somefilter = topicFilter(data, 50, 10000)
+      // console.log(somefilter);
+
     res.json(data)
+    // res.json()
   } catch (err) {
     console.log(chalk.red(err))
     res.status(500).send(err)
