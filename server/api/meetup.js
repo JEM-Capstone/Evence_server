@@ -12,7 +12,7 @@ const composeRequest = (
   method,
   qualifiers,
   base = 'https://api.meetup.com',
-  key = '425d347f87c647b636645757a406'
+  key = '501581a6f6f646d7f155b3b1f165a5d'
 ) => {
   const request = base + method + '?key=' + key + '&sign=true' + qualifiers
   return request

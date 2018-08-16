@@ -20,7 +20,8 @@
     "start": "node server",
     "start-dev": "NODE_ENV='development' npm run build-client-watch & npm run start-server",
     "start-server": "nodemon server -e html,js,scss --ignore public --ignore client",
-    "test": "NODE_ENV='test' mocha \"./server/**/*.spec.js\" \"./client/**/*.spec.js\" \"./script/**/*.spec.js\" --require @babel/polyfill --require @babel/register"
+    "test": "NODE_ENV='test' mocha \"./server/**/*.spec.js\" \"./client/**/*.spec.js\" \"./script/**/*.spec.js\" --require @babel/polyfill --require @babel/register",
+    "build-dictionary": "node server/services/parser/builddictionary.js"
   },
   "lint-staged": {
     "*.{js,jsx}": [
@@ -42,6 +43,8 @@
     "express": "^4.16.3",
     "express-graphql": "^0.6.12",
     "express-session": "^1.15.1",
+    "fuse.js": "^3.2.1",
+    "fuzzysearch": "^1.0.3",
     "graphql": "^0.13.2",
     "history": "^4.6.3",
     "morgan": "^1.8.1",
