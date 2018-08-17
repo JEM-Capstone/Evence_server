@@ -95,7 +95,7 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
   router.get('/redirect', async (req, res, next) => {
     console.log(req.user.dataValues)
     // const email = req.user.dataValues.email
-    res.redirect('exp://8k-xp5.veryspry.evence.exp.direct:80')
+    res.redirect('exp://cs-p66.evelynlatour.evenceui.exp.direct:80')
   })
 
 }

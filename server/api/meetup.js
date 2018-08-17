@@ -124,7 +124,7 @@ router.get(`/events/:group/:eventId/:userId`, async (req, res, next) => {
     const eventId = req.params.eventId //'252570431'
     const method = `/${groupUrlName}/events/${eventId}`
     const qualifiers =
-      '&fields=event_hosts,fee,web_actions,past_event_count_inclusive,featured_photo'
+      '&fields=event_hosts,fee,web_actions,past_event_count_inclusive,featured_photo,plain_text_no_images_description'
     console.log(chalk.green(`gettin stuff from meetup.com....`))
     console.log(
       chalk.bgBlue(`querying endpoint: ${composeRequest(method, qualifiers)}`)
@@ -145,7 +145,7 @@ router.get(`/events/:group/:eventId/:userId`, async (req, res, next) => {
       venueName: data.venue.name,
       venueAddress: data.venue.address_1,
       fee: data.fee ? data.fee.amount : null,
-      description: data.description,
+      description: data.plain_text_no_images_description,
       webActions: [
         data.web_actions.calendar_export_google,
         data.web_actions.calendar_export_ical,
@@ -153,11 +153,8 @@ router.get(`/events/:group/:eventId/:userId`, async (req, res, next) => {
       ],
       directLink: data.link,
       pastEvents: data.past_event_count_inclusive,
-      hosts: data.event_hosts.map(host => [
-        host.name,
-        host.id,
-        host.photo ? host.photo.photo_link : null
-      ]),
+      hostNames: data.event_hosts.map(host => host.name),
+      hostPhotos: data.event_hosts.map(host => host.photo ? host.photo.photo_link : null),
       userId: req.params.userId
     })
 
