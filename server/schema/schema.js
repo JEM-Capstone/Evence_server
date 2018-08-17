@@ -7,6 +7,7 @@ const {
 
 const { UserType, UserTopicType, TopicType, GroupType, EventType } = require(`./types.js`)
 
+const Mutation = require('./mutations')
 
 const RootQuery = new GraphQLObjectType({
   name: `RootQueryType`,
@@ -58,4 +59,5 @@ const RootQuery = new GraphQLObjectType({
 
 module.exports = new GraphQLSchema({
   query: RootQuery,
+  mutation: Mutation
 });
