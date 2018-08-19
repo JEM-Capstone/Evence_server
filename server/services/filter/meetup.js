@@ -5,7 +5,6 @@ const topicFilter = (topicsArr, minGroupCount, minMemberCount) => {
   let filtered = topicsArr.filter(topic => {
     return topic.group_count > minGroupCount && topic.member_count > minMemberCount
   })
-
   return filtered
 }
 
