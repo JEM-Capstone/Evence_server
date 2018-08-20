@@ -2,9 +2,12 @@ const router = require('express').Router()
 const passport = require('passport')
 const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy
 const {User} = require('../db/models')
-const refresh = require('passport-oauth2-refresh')
+const parser = require('../services/parser/parser')
+const {topicsCall, groupsCall} = require('../services/meetupCall')
 
 module.exports = router
+
+let user
 
 if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
   console.log('Linkedin client ID / secret not found. Skipping Linkedin Oauth')
@@ -32,33 +35,53 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
       const summary = profile._json.summary
       const picUrl = profile._json.pictureUrl
 
-      try {
-        User.findOrCreate({
-          where: {linkedinId},
-          defaults: {
-            nameFirst,
-            nameLast,
-            email,
-            industry,
-            linkedinToken,
-            headline,
-            area,
-            numConnections,
-            positions,
-            summary,
-            picUrl
+      const apiArray = parser(summary, headline)
+      // console.log(' this is the profile from linkedin', profile._json)
+      // console.log('this is the access token:', accessToken)
+      // console.log('this is the refreshToken:', refreshToken)
+      console.log('linkedinId', linkedinId)
+      console.log('positions', profile._json.positions)
+      User.findOrCreate({
+        where: {linkedinId},
+        defaults: {
+          nameFirst,
+          nameLast,
+          email,
+          industry,
+          linkedinToken,
+          headline,
+          area,
+          numConnections,
+          positions,
+          summary,
+          picUrl,
+          apiArray
+        }
+      })
+        // asynchronous verification, for effect...
+
+        .then(async () => {
+          console.log('starting to find user')
+          try {
+            user = await User.findOne({where: {linkedinId: linkedinId}})
+            console.log('found user', user.dataValues.id)
+            console.log('starting to call topics')
+            const topicArray = await topicsCall(apiArray, user.dataValues.id)
+            const result = await groupsCall(topicArray, user.area, user.id)
+          } catch (err) {
+            console.log(err)
           }
         })
-        done(null, profile)
-      } catch (err) {
-        done(err)
-      }
+        .then(() => {
+          done(null, profile)
+        })
+        .catch((err) => {
+          done(err)
+        })
     }
   )
 
   passport.use(strategy)
-
-  // refresh.use(strategy)
 
   router.get('/logout', function(req, res) {
     req.logout()
@@ -87,7 +110,6 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
       successRedirect: 'exp://3i-ear.veryspry.ui.exp.direct:80',
       failureRedirect: '/auth/linkedin'
     }), function() {
-      console.log('hey, Im that middleware were testing');
       next()
     }, async (req, res, next) => {
   })
@@ -110,5 +132,4 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
   router.get('/appstate', (req, res, next) => {
     res.send(process.env.LINKEDIN_APP_STATE)
   })
-
 }
