@@ -39,7 +39,8 @@ router.post('/logout', (req, res) => {
 })
 
 router.get('/me', (req, res) => {
-  res.json(req.user)
+  console.log('auth/me', req.session)
+  res.json(req)
 })
 
 router.use('/linkedin', require('./linkedin'))

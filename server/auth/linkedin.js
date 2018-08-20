@@ -34,6 +34,7 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
       const positions = profile._json.positions._total
       const summary = profile._json.summary
       const picUrl = profile._json.pictureUrl
+
       const apiArray = parser(summary, headline)
       // console.log(' this is the profile from linkedin', profile._json)
       // console.log('this is the access token:', accessToken)
@@ -74,7 +75,9 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
         .then(() => {
           done(null, profile)
         })
-        .catch(done)
+        .catch((err) => {
+          done(err)
+        })
     }
   )
 
@@ -85,41 +88,48 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
     res.redirect('/')
   })
 
-  router.get(
-    '/',
+  router.get('/', passport.authenticate('linkedin', (err, user, info) => {
+    if (err) { return next(err) }
+  }))
+
+  router.get('/me', (req, res, next) => {
+    // console.log('login', req)
     passport.authenticate('linkedin', (err, user, info) => {
       if (err) {
         return next(err)
       }
-      console.log('the user', user)
-      console.log('the info', info)
-    }),
-    async (req, res, next) => {
-      // The request will be redirected to LinkedIn for authentication, so this
-      // function will not be called.
-      console.log('auth/linkedin', req)
-      res.redirect('/')
-      next()
-    }
-  )
+      if (!user) {
+        return res.redirect('/auth/linkedin')
+      }
+      res.json(user)
+    })(req, res, next)
+  })
 
-  router.get(
-    '/callback',
-    passport.authenticate('linkedin', {
-      successRedirect: '/auth/linkedin/redirect',
-      failureRedirect: '/login'
-    }),
-    async (req, res, next) => {
-      // console.log(req.user.dataValues)
-      res.send(req.user.dataValues)
+  router.get('/callback', passport.authenticate('linkedin', {
+      // successRedirect: '/auth/linkedin/redirect',
+      successRedirect: 'exp://3i-ear.veryspry.ui.exp.direct:80',
+      failureRedirect: '/auth/linkedin'
+    }), function() {
       next()
-    }
-  )
+    }, async (req, res, next) => {
+  })
+
 
   // Redirect the user back to the
   router.get('/redirect', async (req, res, next) => {
-    // console.log(req.user.dataValues)
-    // const email = req.user.dataValues.email
-    res.redirect('exp://cs-p66.evelynlatour.evenceui.exp.direct:80')
+    res.redirect('exp://8k-xp5.veryspry.evence.exp.direct:80')
+  })
+
+  // /auth/linkedin/clientid --> give you the linkedin client id
+  router.get('/clientid', async(req, res, next) => {
+      res.send(process.env.LINKEDIN_CLIENT_ID)
+  })
+  // /auth/linkedin/clientsecret --> gives you the linkedin client secret
+  router.get('/clientsecret', async(req, res, next) => {
+    res.send(process.env.LINKEDIN_CLIENT_SECRET)
+  })
+  // /auth/linkedin/appstate
+  router.get('/appstate', (req, res, next) => {
+    res.send(process.env.LINKEDIN_APP_STATE)
   })
 }

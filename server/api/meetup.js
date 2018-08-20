@@ -8,6 +8,7 @@ const {
 } = require(`../db/models/index`)
 const chalk = require(`chalk`)
 const axios = require('axios')
+const topicFilter = require('../services/index')
 
 /* for questions about these routes, ask Evelyn */
 
@@ -43,6 +44,7 @@ router.get(`/topics/:keyword/:userId`, async (req, res, next) => {
     const userId = req.params.userId
 
     const method = `/find/topics`
+
     const qualifiers = `&query=${keyword}&page=10&only=group_count,name,id`
     console.log('inside api... keyword and user id', keyword, userId)
     console.log(chalk.green(`gettin stuff from meetup.com....`))
