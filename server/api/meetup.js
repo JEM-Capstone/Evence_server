@@ -1,5 +1,11 @@
 const router = require(`express`).Router()
-const { User, Topic, UserGroup, UserEvent } = require(`../db/models/index`)
+const {
+  User,
+  Topic,
+  UserGroup,
+  UserEvent,
+  UserTopic
+} = require(`../db/models/index`)
 const chalk = require(`chalk`)
 const axios = require('axios')
 
@@ -12,9 +18,10 @@ const composeRequest = (
   method,
   qualifiers,
   base = 'https://api.meetup.com',
-  key = '501581a6f6f646d7f155b3b1f165a5d'
+  key = '501581a6f6f646d7f155b3b1f165a5d',
+  altKey = '7b24331442236f47294c3555e126a75'
 ) => {
-  const request = base + method + '?key=' + key + '&sign=true' + qualifiers
+  const request = base + method + '?key=' + altKey + '&sign=true' + qualifiers
   return request
 }
 
@@ -37,7 +44,7 @@ router.get(`/topics/:keyword/:userId`, async (req, res, next) => {
 
     const method = `/find/topics`
     const qualifiers = `&query=${keyword}&page=10&only=group_count,name,id`
-
+    console.log('inside api... keyword and user id', keyword, userId)
     console.log(chalk.green(`gettin stuff from meetup.com....`))
     console.log(
       chalk.bgBlue(`querying endpoint: ${composeRequest(method, qualifiers)}`)
@@ -45,7 +52,10 @@ router.get(`/topics/:keyword/:userId`, async (req, res, next) => {
     const {data} = await axios.get(composeRequest(method, qualifiers))
 
     // keep only topic id that have associated group_counts > 50
-    const filteredData = data.filter(item => item.group_count > 50)
+    const filteredData = data.filter(item => item.group_count > 2000)
+    console.log(
+      chalk.red('this is our filteredData for groups over 200:', filteredData)
+    )
     // grab only the ids for the DB
     const topicArray = filteredData.map(item => item.id)
 
@@ -53,6 +63,9 @@ router.get(`/topics/:keyword/:userId`, async (req, res, next) => {
       const [topics, wasCreated] = await Topic.findOrCreate({
         where: {keyword: keyword},
         defaults: {topics: topicArray}
+      })
+      const join = await UserTopic.findOrCreate({
+        where: {userId: userId, topicId: topics.dataValues.id}
       })
       console.log(
         chalk.green(
@@ -67,7 +80,7 @@ router.get(`/topics/:keyword/:userId`, async (req, res, next) => {
         )
       )
 
-    res.json(data)
+    res.json(topicArray)
   } catch (err) {
     console.log(chalk.red(err))
     res.status(500).send(err)
@@ -89,25 +102,28 @@ router.get(`/groups/:topicId/:city/:userId`, async (req, res, next) => {
     console.log(
       chalk.bgBlue(`querying endpoint: ${composeRequest(method, qualifiers)}`)
     )
-    const {data} = await axios.get(composeRequest(method, qualifiers))
-
-    const filteredData = data.filter(item => item.next_event) //their only=next_event isn't working
+    const result = await axios.get(composeRequest(method, qualifiers))
+    // console.log(result.headers)
+    const filteredData = result.data.filter(item => item.next_event) //their only=next_event isn't working
 
     // Save to DB along with user ID
     for (const item of filteredData) {
-      await UserGroup.create({
+      await UserGroup.findOrCreate({
         //TODO: make this findOrCreate using groupId & userId so you don't get duplicates
-        groupId: item.id,
-        displayName: item.name,
-        urlName: item.urlname,
-        members: item.members,
-        nextEventId: item.next_event.id,
-        userId: req.params.userId
+        where: {groupId: item.id},
+        defaults: {
+          displayName: item.name,
+          urlName: item.urlname,
+          members: item.members,
+          nextEventId: item.next_event.id,
+          userId: req.params.userId
+        }
       })
     }
     console.log(
       chalk.green(`groups may or may not have been saved to the database!`)
     )
+    // console.log(filteredData)
     res.json(filteredData)
   } catch (err) {
     console.log(chalk.red(err))
@@ -132,33 +148,42 @@ router.get(`/events/:group/:eventId/:userId`, async (req, res, next) => {
 
     const {data} = await axios.get(composeRequest(method, qualifiers))
 
-    const event = await UserEvent.create({
+    const event = await UserEvent.findOrCreate({
       //TODO: make this findOrCreate using eventId & userId so you don't get duplicates
-      eventName: data.name,
-      eventId: data.id,
-      photo: data.featured_photo ? data.featured_photo.photo_link : null,
-      eventGroup: data.group.name,
-      date: data.local_date,
-      time: data.local_time,
-      eventCity: data.group.localized_location,
-      rsvps: data.yes_rsvp_count,
-      venueName: data.venue.name,
-      venueAddress: data.venue.address_1,
-      fee: data.fee ? data.fee.amount : null,
-      description: data.description,
-      webActions: [
-        data.web_actions.calendar_export_google,
-        data.web_actions.calendar_export_ical,
-        data.web_actions.calendar_export_outlook
-      ],
-      directLink: data.link,
-      pastEvents: data.past_event_count_inclusive,
-      hosts: data.event_hosts.map(host => [
-        host.name,
-        host.id,
-        host.photo ? host.photo.photo_link : null
-      ]),
-      userId: req.params.userId
+      where: {eventId: data.id},
+      defaults: {
+        eventName: data.name,
+        eventId: data.id,
+        photo: data.featured_photo ? data.featured_photo.photo_link : null,
+        eventGroup: data.group.name,
+        date: data.local_date,
+        time: data.local_time,
+        eventCity: data.group.localized_location,
+        rsvps: data.yes_rsvp_count,
+        venueName: data.venue ? data.venue.name : null,
+        venueAddress: data.venue ? data.venue.address_1 : null,
+        fee: data.fee ? data.fee.amount : null,
+        description: data.description,
+        webActions: data.web_actions
+          ? [
+              data.web_actions.calendar_export_google,
+              data.web_actions.calendar_export_ical,
+              data.web_actions.calendar_export_outlook
+            ]
+          : null,
+        directLink: data.link,
+        pastEvents: data.past_event_count_inclusive
+          ? data.past_event_count_inclusive
+          : null,
+        hosts: data.event_hosts
+          ? data.event_hosts.map(host => [
+              host.name,
+              host.id,
+              host.photo ? host.photo.photo_link : null
+            ])
+          : null,
+        userId: req.params.userId
+      }
     })
 
     console.log(

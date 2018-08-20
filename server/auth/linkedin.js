@@ -3,9 +3,11 @@ const passport = require('passport')
 const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy
 const {User} = require('../db/models')
 const parser = require('../services/parser/parser')
-const meetupCall = require('../services/meetupCall')
+const {topicsCall, groupsCall} = require('../services/meetupCall')
 
 module.exports = router
+
+let user
 
 if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
   console.log('Linkedin client ID / secret not found. Skipping Linkedin Oauth')
@@ -56,11 +58,21 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
         }
       })
         // asynchronous verification, for effect...
-        .then(() => {
-          done(null, profile)
+
+        .then(async () => {
+          console.log('starting to find user')
+          try {
+            user = await User.findOne({where: {linkedinId: linkedinId}})
+            console.log('found user', user.dataValues.id)
+            console.log('starting to call topics')
+            const topicArray = await topicsCall(apiArray, user.dataValues.id)
+            const result = await groupsCall(topicArray, user.area, user.id)
+          } catch (err) {
+            console.log(err)
+          }
         })
         .then(() => {
-          meetupCall(['computer+software', 'business'], 3)
+          done(null, profile)
         })
         .catch(done)
     }
