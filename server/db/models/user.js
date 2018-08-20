@@ -56,6 +56,9 @@ const User = db.define('user', {
   },
   picUrl: {
     type: Sequelize.STRING
+  },
+  apiArray: {
+    type: Sequelize.ARRAY(Sequelize.TEXT)
   }
 })
 

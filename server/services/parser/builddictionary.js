@@ -7,12 +7,20 @@ const dictionary = {}
     * THE KEYS ARE THE SMALL LIST, THE ARRAYS ARE THE LONG LIST OF IMPORTANT WORDS
     * BUILDER TAKES BUILD AND MAKES A DICTIONARY THAT WE CAN QUERY AGAINS WITH THE PARSER
 
-*/ --------------------------------------------------------------------------
+ -------------------------------------------------------------------------- */
 
 const build = {
   // arts: ['painting', 'drawing', 'scultping', 'pottery', 'music'],
   // books: ['fiction', 'nonfiction', 'novels', 'biography', 'library', 'reading', 'writing'],
-  business: ['marketing', 'finance', 'office', 'corporate', 'startup', 'career', 'entrepreneur'],
+  business: [
+    'marketing',
+    'finance',
+    'office',
+    'corporate',
+    'startup',
+    'career',
+    'entrepreneur'
+  ],
   // auto: ['cars', 'trucks', 'motorcylce', 'automotive'],
   // community: ['local', 'volunteer', 'outreach', 'social', 'neighborhood'],
   // dancing: ['moderndance', 'ballet', 'lyrical', 'dancecompany', 'choreography', 'contemporarydance', 'hiphopdance'],
@@ -40,35 +48,71 @@ const build = {
   // social: [],
   // sports: ['ball', 'athlete', 'workout', 'referee', 'coach', 'player'],
   computer: {
-      games: ['video', 'gaming', 'gamer', 'player'],
-      hardware: ['motherboar', 'harddrive', 'repair', 'ram', 'card', 'disk'],
-      networking: ['cable', 'LAN', 'modem', 'router', 'internet' ],
-      software: ['programming', 'coding', 'javascript', 'python', 'react',
-      'program', 'reactnative', 'express', 'node', 'css', 'client',
-      'frontend', 'backend', 'fullstack', 'develop', 'developer',
-      'applications', 'app', 'apps', 'developing', 'engineer', 'js',
-      'design', 'node.js', 'postgres', 'database', 'postico', 'mongo',
-      'mongodb', 'build'],
-      network : {
-        security: ['firewall', 'proxy', 'antivirus', 'malware', 'virus', 'infected', 'hacker', 'attck', 'ddos', 'xss']
-      }
+    games: ['video', 'gaming', 'gamer', 'player'],
+    hardware: ['motherboar', 'harddrive', 'repair', 'ram', 'card', 'disk'],
+    networking: ['cable', 'LAN', 'modem', 'router', 'internet'],
+    software: [
+      'programming',
+      'coding',
+      'javascript',
+      'python',
+      'react',
+      'program',
+      'reactnative',
+      'express',
+      'node',
+      'css',
+      'client',
+      'frontend',
+      'backend',
+      'fullstack',
+      'develop',
+      'developer',
+      'applications',
+      'app',
+      'apps',
+      'developing',
+      'engineer',
+      'js',
+      'design',
+      'node.js',
+      'postgres',
+      'database',
+      'postico',
+      'mongo',
+      'mongodb',
+      'build'
+    ],
+    network: {
+      security: [
+        'firewall',
+        'proxy',
+        'antivirus',
+        'malware',
+        'virus',
+        'infected',
+        'hacker',
+        'attck',
+        'ddos',
+        'xss'
+      ]
+    }
   },
-  tech: ['computers', 'programming', 'code', 'coding'],
+  tech: ['computers', 'programming', 'code', 'coding']
   // writing: ['author', 'readers', 'articles'],
 }
 
 const builder = (build, parentWord = '') => {
   for (let key in build) {
-    if(!Array.isArray(build[key])) {
+    if (!Array.isArray(build[key])) {
       let word = `${parentWord} ${key}`
       builder(build[key], word)
-    }
-    else {
+    } else {
       let parent = `${parentWord} ${key}`.slice(1)
       if (parentWord.length > 0) dictionary[key] = parent
-
-      // else dictionary[key] = key
-      else dictionary[key] = parent
+      else
+        // else dictionary[key] = key
+        dictionary[key] = parent
       build[key].forEach(word => {
         // if (!dictionary[word]) dictionary[word] = key
         if (!dictionary[word]) dictionary[word] = parent
@@ -80,15 +124,14 @@ const builder = (build, parentWord = '') => {
 builder(build)
 
 // ---------------------------------------------
-    // NESTED BUILDER
+// NESTED BUILDER
 // ---------------------------------------------
 
-const builder1 = (obj) => {
+const builder1 = obj => {
   for (let key in build) {
-    if(!Array.isArray(build[key])) {
+    if (!Array.isArray(build[key])) {
       builder(build[key])
-    }
-    else {
+    } else {
       dictionary[key] = key
       build[key].forEach(word => {
         if (!dictionary[word]) dictionary[word] = key
@@ -99,24 +142,132 @@ const builder1 = (obj) => {
 
 // builder(build)
 
-
 console.log(dictionary)
 
-commonWords = {}
+const commonWords = {}
 
-commonWordsArr = ["the", "of", "and", "a", "to", "in", "is", "you", "that", "it",
-                  "he", "was", "for", "on", "are", "as", "with", "his", "they", "I",
-                  "at", "be", "this", "have", "from", "or", "one", "had", "by", "word",
-                  "but", "not", "what", "all", "were", "we", "when", "your", "can", "said",
-                  "there", "use", "an", "each", "which", "she", "do", "how", "their", "if",
-                  "will", "up", "other", "about", "out", "many", "then", "them", "these",
-                  "so", "some", "her", "would", "make", "like", "him", "into", "time", "has",
-                  "look", "two", "more", "write", "go", "see", "number", "no", "way", "could",
-                  "people", "my", "than", "first", "water", "been", "call", "who", "oil", "its",
-                  "now", "find", "long", "down", "day", "did", "get", "come", "made", "may", "part", "Hi",
-                "I'm", "hand", "used", "list", "two", "be", "also", "really", "use", "am", "highly", 'very',
-                "you", "work", "something", "from", "where", "some", "something"]
-
+const commonWordsArr = [
+  'the',
+  'of',
+  'and',
+  'a',
+  'to',
+  'in',
+  'is',
+  'you',
+  'that',
+  'it',
+  'he',
+  'was',
+  'for',
+  'on',
+  'are',
+  'as',
+  'with',
+  'his',
+  'they',
+  'I',
+  'at',
+  'be',
+  'this',
+  'have',
+  'from',
+  'or',
+  'one',
+  'had',
+  'by',
+  'word',
+  'but',
+  'not',
+  'what',
+  'all',
+  'were',
+  'we',
+  'when',
+  'your',
+  'can',
+  'said',
+  'there',
+  'use',
+  'an',
+  'each',
+  'which',
+  'she',
+  'do',
+  'how',
+  'their',
+  'if',
+  'will',
+  'up',
+  'other',
+  'about',
+  'out',
+  'many',
+  'then',
+  'them',
+  'these',
+  'so',
+  'some',
+  'her',
+  'would',
+  'make',
+  'like',
+  'him',
+  'into',
+  'time',
+  'has',
+  'look',
+  'two',
+  'more',
+  'write',
+  'go',
+  'see',
+  'number',
+  'no',
+  'way',
+  'could',
+  'people',
+  'my',
+  'than',
+  'first',
+  'water',
+  'been',
+  'call',
+  'who',
+  'oil',
+  'its',
+  'now',
+  'find',
+  'long',
+  'down',
+  'day',
+  'did',
+  'get',
+  'come',
+  'made',
+  'may',
+  'part',
+  'Hi',
+  "I'm",
+  'hand',
+  'used',
+  'list',
+  'two',
+  'be',
+  'also',
+  'really',
+  'use',
+  'am',
+  'highly',
+  'very',
+  'you',
+  'work',
+  'something',
+  'from',
+  'where',
+  'some',
+  'something'
+]
 
 commonWordsArr.forEach(word => {
   if (!commonWords[word]) commonWords[word] = true

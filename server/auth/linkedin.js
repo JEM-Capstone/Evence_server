@@ -2,9 +2,12 @@ const router = require('express').Router()
 const passport = require('passport')
 const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy
 const {User} = require('../db/models')
-const refresh = require('passport-oauth2-refresh')
+const parser = require('../services/parser/parser')
+const {topicsCall, groupsCall} = require('../services/meetupCall')
 
 module.exports = router
+
+let user
 
 if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
   console.log('Linkedin client ID / secret not found. Skipping Linkedin Oauth')
@@ -31,6 +34,7 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
       const positions = profile._json.positions._total
       const summary = profile._json.summary
       const picUrl = profile._json.pictureUrl
+      const apiArray = parser(summary, headline)
       // console.log(' this is the profile from linkedin', profile._json)
       // console.log('this is the access token:', accessToken)
       // console.log('this is the refreshToken:', refreshToken)
@@ -49,10 +53,24 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
           numConnections,
           positions,
           summary,
-          picUrl
+          picUrl,
+          apiArray
         }
       })
         // asynchronous verification, for effect...
+
+        .then(async () => {
+          console.log('starting to find user')
+          try {
+            user = await User.findOne({where: {linkedinId: linkedinId}})
+            console.log('found user', user.dataValues.id)
+            console.log('starting to call topics')
+            const topicArray = await topicsCall(apiArray, user.dataValues.id)
+            const result = await groupsCall(topicArray, user.area, user.id)
+          } catch (err) {
+            console.log(err)
+          }
+        })
         .then(() => {
           done(null, profile)
         })
@@ -62,40 +80,46 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
 
   passport.use(strategy)
 
-  // refresh.use(strategy)
-
   router.get('/logout', function(req, res) {
     req.logout()
     res.redirect('/')
   })
 
-  router.get('/', passport.authenticate('linkedin', (err, user, info) => {
-    if (err) { return next(err) }
-    console.log('the user', user)
-    console.log('the info', info)
+  router.get(
+    '/',
+    passport.authenticate('linkedin', (err, user, info) => {
+      if (err) {
+        return next(err)
+      }
+      console.log('the user', user)
+      console.log('the info', info)
+    }),
+    async (req, res, next) => {
+      // The request will be redirected to LinkedIn for authentication, so this
+      // function will not be called.
+      console.log('auth/linkedin', req)
+      res.redirect('/')
+      next()
+    }
+  )
 
-  }), async (req, res, next) => {
-    // The request will be redirected to LinkedIn for authentication, so this
-    // function will not be called.
-    console.log('auth/linkedin',req)
-    res.redirect('/')
-    next()
-  })
-
-  router.get('/callback', passport.authenticate('linkedin', {
+  router.get(
+    '/callback',
+    passport.authenticate('linkedin', {
       successRedirect: '/auth/linkedin/redirect',
       failureRedirect: '/login'
-    }), async (req, res, next) => {
-        // console.log(req.user.dataValues)
-        res.send(req.user.dataValues)
-        next()
-  })
+    }),
+    async (req, res, next) => {
+      // console.log(req.user.dataValues)
+      res.send(req.user.dataValues)
+      next()
+    }
+  )
 
   // Redirect the user back to the
   router.get('/redirect', async (req, res, next) => {
-    console.log(req.user.dataValues)
+    // console.log(req.user.dataValues)
     // const email = req.user.dataValues.email
     res.redirect('exp://cs-p66.evelynlatour.evenceui.exp.direct:80')
   })
-
 }
