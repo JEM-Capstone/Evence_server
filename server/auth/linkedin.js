@@ -49,11 +49,7 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
             picUrl
           }
         })
-        // asynchronous verification, for effect...
         done(null, profile)
-        // .then(() => {
-        // })
-        // .catch(done)
       } catch (err) {
         done(err)
       }
@@ -65,52 +61,23 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
   // refresh.use(strategy)
 
   router.get('/logout', function(req, res) {
-    console.log('logout');
     req.logout()
     res.redirect('/')
   })
 
   router.get('/', passport.authenticate('linkedin', (err, user, info) => {
     if (err) { return next(err) }
-    console.log('auth/linkedin', req.session)
   }))
-
-  // router.get('/', (req, res, next) => {
-  //   // console.log('login', req)
-  //   passport.authenticate('linkedin', (err, user, info) => {
-  //     if (err) {
-  //       console.log('err');
-  //       return next(err)
-  //     }
-  //     if (!user) {
-  //       console.log('not user');
-  //       return res.redirect('/auth/linkedin')
-  //     }
-  //     req.logIn(user, (err) => {
-  //       if (err) return next(err)
-  //       console.log('/auth/linkedin', req.user)
-  //       return res.redirect('exp://8k-xp5.veryspry.evence.exp.direct:80')
-  //     })
-  //   })(req, res, next)
-  // })
 
   router.get('/me', (req, res, next) => {
     // console.log('login', req)
     passport.authenticate('linkedin', (err, user, info) => {
       if (err) {
-        console.log('err');
         return next(err)
       }
       if (!user) {
-        console.log('not user');
         return res.redirect('/auth/linkedin')
       }
-      // req.logIn(user, (err) => {
-      //   if (err) return next(err)
-      //   console.log('/auth/linkedin', req.user)
-      //   return res.redirect('exp://8k-xp5.veryspry.evence.exp.direct:80')
-      // })
-      console.log('user', user)
       res.json(user)
     })(req, res, next)
   })
@@ -123,19 +90,11 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
       console.log('hey, Im that middleware were testing');
       next()
     }, async (req, res, next) => {
-        // console.log('THIS IS THE IN /CALLBACK -----------------------------------------------',req.user.dataValues)
-        // res.send(req.user.dataValues)
   })
 
-  // router.get('/callback', passport.authenticate('linkedin'), async (req, res, next) => {
-  //       // console.log('THIS IS THE IN /CALLBACK -----------------------------------------------',req.user.dataValues)
-  //       res.redirect('exp://8k-xp5.veryspry.evence.exp.direct:80')
-  //
-  // })
 
   // Redirect the user back to the
   router.get('/redirect', async (req, res, next) => {
-    console.log('/redirect',req.user)
     res.redirect('exp://8k-xp5.veryspry.evence.exp.direct:80')
   })
 

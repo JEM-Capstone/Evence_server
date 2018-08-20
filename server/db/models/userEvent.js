@@ -5,7 +5,7 @@ const UserEvent = db.define('userEvent', {
   eventName: {
     type: Sequelize.STRING,
   },
-  eventId: {
+  eventId: { //meetup eventId - change name
     type: Sequelize.STRING,
   },
   photo: {
@@ -47,8 +47,15 @@ const UserEvent = db.define('userEvent', {
   pastEvents: {
     type: Sequelize.INTEGER,
   },
-  hosts: { // [[name, meetupId, photo_link], [...]]
+  hostNames: {
     type: Sequelize.ARRAY(Sequelize.STRING)
+  },
+  hostPhotos: {
+    type: Sequelize.ARRAY(Sequelize.STRING)
+  },
+  favorite: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
   }
 })
 
