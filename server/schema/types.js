@@ -1,7 +1,7 @@
 const graphql = require(`graphql`);
 const { User, Topic, UserGroup, UserEvent, UserTopic } = require(`../db/models/index`);
 const {
-  GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLID, GraphQLInt, GraphQLList
+  GraphQLObjectType, GraphQLBoolean, GraphQLString, GraphQLID, GraphQLInt, GraphQLList
 } = graphql;
 
 const UserType = new GraphQLObjectType({
@@ -92,7 +92,9 @@ const EventType = new GraphQLObjectType({
     webActions: { type: new GraphQLList(GraphQLString) },
     directLink: { type: GraphQLString },
     pastEvents: { type: GraphQLInt },
-    hosts: { type: new GraphQLList(GraphQLString) },
+    favorite: { type: GraphQLBoolean},
+    hostNames: { type: new GraphQLList(GraphQLString) },
+    hostPhotos: { type: new GraphQLList(GraphQLString) },
     user: {
       type: UserType,
       resolve(root, args) {

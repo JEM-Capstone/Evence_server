@@ -140,7 +140,7 @@ router.get(`/events/:group/:eventId/:userId`, async (req, res, next) => {
     const eventId = req.params.eventId //'252570431'
     const method = `/${groupUrlName}/events/${eventId}`
     const qualifiers =
-      '&fields=event_hosts,fee,web_actions,past_event_count_inclusive,featured_photo'
+      '&fields=event_hosts,fee,web_actions,past_event_count_inclusive,featured_photo,plain_text_no_images_description'
     console.log(chalk.green(`gettin stuff from meetup.com....`))
     console.log(
       chalk.bgBlue(`querying endpoint: ${composeRequest(method, qualifiers)}`)
