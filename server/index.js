@@ -34,13 +34,11 @@ if (process.env.NODE_ENV !== 'production') require('../secrets')
 
 // passport registration
 passport.serializeUser((user, done) => {
-  console.log('hey we serializing now')
   done(null, user.id)
 })
 
 passport.deserializeUser(async (id, done) => {
   try {
-    console.log('hey we deserializing now')
     const user = await db.models.user.findOne({where: {linkedinId: id}})
     done(null, user)
   } catch (err) {
