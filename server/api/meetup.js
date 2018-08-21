@@ -151,7 +151,6 @@ router.get(`/events/:group/:eventId/:userId`, async (req, res, next) => {
     const {data} = await axios.get(composeRequest(method, qualifiers))
 
     const event = await UserEvent.findOrCreate({
-      //TODO: make this findOrCreate using eventId & userId so you don't get duplicates
       where: {eventId: data.id},
       defaults: {
         eventName: data.name,
@@ -165,7 +164,7 @@ router.get(`/events/:group/:eventId/:userId`, async (req, res, next) => {
         venueName: data.venue ? data.venue.name : null,
         venueAddress: data.venue ? data.venue.address_1 : null,
         fee: data.fee ? data.fee.amount : null,
-        description: data.description,
+        description: data.plain_text_no_images_description,
         webActions: data.web_actions
           ? [
               data.web_actions.calendar_export_google,
@@ -177,13 +176,10 @@ router.get(`/events/:group/:eventId/:userId`, async (req, res, next) => {
         pastEvents: data.past_event_count_inclusive
           ? data.past_event_count_inclusive
           : null,
-        hosts: data.event_hosts
-          ? data.event_hosts.map(host => [
-              host.name,
-              host.id,
-              host.photo ? host.photo.photo_link : null
-            ])
-          : null,
+        hostNames: data.event_hosts.map(host => host.name),
+        hostPhotos: data.event_hosts.map(
+          host => (host.photo ? host.photo.photo_link : null)
+        ),
         userId: req.params.userId
       }
     })

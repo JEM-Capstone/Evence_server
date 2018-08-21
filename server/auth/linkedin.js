@@ -87,7 +87,7 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
     req.logout()
     res.redirect('/')
   })
-
+  // /auth/linkedin
   router.get(
     '/',
     passport.authenticate('linkedin', (err, user, info) => {
