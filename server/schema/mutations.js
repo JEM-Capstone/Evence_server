@@ -6,7 +6,7 @@ const {
   GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLID, GraphQLInt, GraphQLList, GraphQLBoolean
 } = graphql;
 
-const Mutation = new GraphQLObjectType({ 
+const Mutation = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
     favoriteEvent: {
@@ -29,23 +29,23 @@ const Mutation = new GraphQLObjectType({
         return updatedEvent
       }
     },
-    location: {
-      type: null, // this is clearly not the correct value
-      args: {
-        id: { type: GraphQLID },
-        area: { type: GraphQLString },
-      },
-      async resolve(root, args) {
-        const updatedCity = await User.update({
-          area: args.area
-        }, {
-          where: {id: args.id },
-          returning: true,
-          plain: true,
-        })
-        return updatedCity
-      }
-    }
+    // location: {
+    //   type: null, // this is clearly not the correct value
+    //   args: {
+    //     id: { type: GraphQLID },
+    //     area: { type: GraphQLString },
+    //   },
+    //   async resolve(root, args) {
+    //     const updatedCity = await User.update({
+    //       area: args.area
+    //     }, {
+    //       where: {id: args.id },
+    //       returning: true,
+    //       plain: true,
+    //     })
+    //     return updatedCity
+    //   }
+    // }
   }
 })
 
