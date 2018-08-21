@@ -50,8 +50,10 @@ const RootQuery = new GraphQLObjectType({
     events: {
       type: new GraphQLList(EventType),
       args: { userId: { type: GraphQLID } },
-      resolve (root, args) {
-        return UserEvent.findAll({where: {userId: args.userId}});
+      async resolve (root, args) {
+        const events = await UserEvent.findAll({where: {userId: args.userId}});
+        const sortedEvents = events.sort((a,b) => new Date(a.date) - new Date(b.date))
+        return sortedEvents
       },
     },
   },
