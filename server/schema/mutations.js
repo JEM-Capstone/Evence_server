@@ -28,7 +28,24 @@ const Mutation = new GraphQLObjectType({
         })
         return updatedEvent
       }
-    }
+    },
+    // location: {
+    //   type: null, // this is clearly not the correct value
+    //   args: {
+    //     id: { type: GraphQLID },
+    //     area: { type: GraphQLString },
+    //   },
+    //   async resolve(root, args) {
+    //     const updatedCity = await User.update({
+    //       area: args.area
+    //     }, {
+    //       where: {id: args.id },
+    //       returning: true,
+    //       plain: true,
+    //     })
+    //     return updatedCity
+    //   }
+    // }
   }
 })
 
