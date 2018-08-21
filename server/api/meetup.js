@@ -22,7 +22,7 @@ const composeRequest = (
   key = '501581a6f6f646d7f155b3b1f165a5d',
   altKey = '7b24331442236f47294c3555e126a75'
 ) => {
-  const request = base + method + '?key=' + altKey + '&sign=true' + qualifiers
+  const request = base + method + '?key=' + key + '&sign=true' + qualifiers
   return request
 }
 
@@ -54,7 +54,7 @@ router.get(`/topics/:keyword/:userId`, async (req, res, next) => {
     const {data} = await axios.get(composeRequest(method, qualifiers))
 
     // keep only topic id that have associated group_counts > 50
-    const filteredData = data.filter(item => item.group_count > 2000)
+    const filteredData = data.filter(item => item.group_count > 20)
     console.log(
       chalk.red('this is our filteredData for groups over 200:', filteredData)
     )
@@ -177,10 +177,11 @@ router.get(`/events/:group/:eventId/:userId`, async (req, res, next) => {
           ? data.past_event_count_inclusive
           : null,
         hostNames: data.event_hosts.map(host => host.name),
-        hostPhotos: data.event_hosts.map(host => host.photo ? host.photo.photo_link : null),
+        hostPhotos: data.event_hosts.map(
+          host => (host.photo ? host.photo.photo_link : null)
+        ),
         userId: req.params.userId
       }
-
     })
 
     console.log(

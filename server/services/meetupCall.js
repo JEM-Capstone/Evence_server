@@ -39,7 +39,7 @@ const eventsCall = async (groupEventArr, userId) => {
         } catch (err) {
           console.log(err)
         }
-      }, 1000 + 500 * index)
+      }, 1000 + 300 * index)
     })(i)
     console.log(
       'adding entry:',
@@ -63,18 +63,10 @@ const groupsCall = (idArr, city, userId) => {
               idArr[i]
             }/${city}/${userId}`
           )
-          // const convertedData = data.map(group => {
-          //   return [group.urlname, group.next_event.id]
-          // })
-          // console.log('this is the data', convertedData)
-          // groupEventArr = groupEventArr.concat(convertedData)
-          // console.log('this is the group event arr', groupEventArr)
-
-          // console.log('this is the event info', data[i].next_event.id)
         } catch (err) {
           console.log(err)
         }
-      }, 1000 + 500 * index)
+      }, 1000 + 300 * index)
     })(i)
   }
   setTimeout(async () => {
@@ -90,7 +82,7 @@ const groupsCall = (idArr, city, userId) => {
     } catch (err) {
       console.log(err)
     }
-  }, 1000 + 500 * idArr.length + 1)
+  }, 1000 + 300 * idArr.length + 1)
 }
 
 // console.log(groupEventData)

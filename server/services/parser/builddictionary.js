@@ -12,15 +12,15 @@ const dictionary = {}
 const build = {
   // arts: ['painting', 'drawing', 'scultping', 'pottery', 'music'],
   // books: ['fiction', 'nonfiction', 'novels', 'biography', 'library', 'reading', 'writing'],
-  business: [
-    'marketing',
-    'finance',
-    'office',
-    'corporate',
-    'startup',
-    'career',
-    'entrepreneur'
-  ],
+  // business: [
+  //   'marketing',
+  //   'finance',
+  //   'office',
+  //   'corporate',
+  //   'startup',
+  //   'career',
+  //   'entrepreneur'
+  // ],
   // auto: ['cars', 'trucks', 'motorcylce', 'automotive'],
   // community: ['local', 'volunteer', 'outreach', 'social', 'neighborhood'],
   // dancing: ['moderndance', 'ballet', 'lyrical', 'dancecompany', 'choreography', 'contemporarydance', 'hiphopdance'],
@@ -47,6 +47,27 @@ const build = {
   // scifi: [],
   // social: [],
   // sports: ['ball', 'athlete', 'workout', 'referee', 'coach', 'player'],
+  javascript: [
+    'javascript',
+    'reactnative',
+    'express',
+    'node',
+    'js',
+    'postgres',
+    'node.js',
+    'postico',
+    'web',
+    'app',
+    'redux',
+    'reactredux',
+    '.js',
+    'webdev',
+    'mobile',
+    'phone',
+    'android',
+    'ios',
+    'css'
+  ],
   computer: {
     games: ['video', 'gaming', 'gamer', 'player'],
     hardware: ['motherboar', 'harddrive', 'repair', 'ram', 'card', 'disk'],
@@ -54,31 +75,18 @@ const build = {
     software: [
       'programming',
       'coding',
-      'javascript',
       'python',
-      'react',
       'program',
-      'reactnative',
-      'express',
-      'node',
-      'css',
-      'client',
       'frontend',
       'backend',
       'fullstack',
       'develop',
       'developer',
       'applications',
-      'app',
-      'apps',
       'developing',
       'engineer',
-      'js',
       'design',
-      'node.js',
-      'postgres',
       'database',
-      'postico',
       'mongo',
       'mongodb',
       'build'
@@ -97,8 +105,8 @@ const build = {
         'xss'
       ]
     }
-  },
-  tech: ['computers', 'programming', 'code', 'coding']
+  }
+  // tech: ['computers', 'programming', 'code', 'coding']
   // writing: ['author', 'readers', 'articles'],
 }
 
