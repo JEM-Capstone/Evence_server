@@ -14,9 +14,9 @@ const RootQuery = new GraphQLObjectType({
   fields: {
     user: { // this names the query for frontend usage
       type: UserType,
-      args: { linkedinId: { type: GraphQLString } },
+      args: { id: { type: GraphQLID } },
       resolve(root, args) {
-        return User.findOne({ where: { linkedinId: args.linkedinId }})
+        return User.findById(args.id)
       }
     },
     topic: { // this names the query for frontend usage
