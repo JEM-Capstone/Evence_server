@@ -17,6 +17,8 @@ const UserType = new GraphQLObjectType({
     area: { type: GraphQLString },
     numConnections: { type: GraphQLInt },
     picUrl: { type: GraphQLString },
+    apiArray: {type: new GraphQLList(GraphQLString)},
+    summary: {type: GraphQLString},
     events: {
       type: new GraphQLList(EventType),
       resolve(root, args){
