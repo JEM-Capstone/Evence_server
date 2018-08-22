@@ -7,7 +7,109 @@
 
  -------------------------------------------------------------------------- */
 
-const build = {
+ const build = {
+   // arts: ['painting', 'drawing', 'scultping', 'pottery', 'music'],
+   // books: ['fiction', 'nonfiction', 'novels', 'biography', 'library', 'reading', 'writing'],
+   // business: [
+   //   'marketing',
+   //   'finance',
+   //   'office',
+   //   'corporate',
+   //   'startup',
+   //   'career',
+   //   'entrepreneur'
+   // ],
+   // auto: ['cars', 'trucks', 'motorcylce', 'automotive'],
+   // community: ['local', 'volunteer', 'outreach', 'social', 'neighborhood'],
+   // dancing: ['moderndance', 'ballet', 'lyrical', 'dancecompany', 'choreography', 'contemporarydance', 'hiphopdance'],
+   // education: ['elementary', 'highschool', 'teacher', 'teaching', 'teach', 'professor'],
+   // fashion: ['clothes', 'model', 'beauty', 'makeup', 'clothingdesign'],
+   // fitness: ['health', 'exercise', 'workout', 'running', 'lifting', 'cardio', 'yoga', 'triathlon', 'biking', 'cycling'],
+   // food: ['cook', 'cooking', 'chef', 'restaurant', 'dining', 'cuisine'],
+   // drink: ['cocktails', 'coffee', 'bartending', 'barista', 'tea', 'beer', 'brewing', 'distilling', 'wine', 'sommelier'],
+   // games: ['board games', 'video games', 'larping'],
+   // movements: [],
+   // health: ['doctor', 'nurse', 'surgeon', 'healthcare', 'hospital', 'clinic'],
+   // crafts: [],
+   // language: ['linguist', 'translate', 'bi-lingual'],
+   // lgbt: ['gay', 'lesbian', 'transgender', 'queer', 'bisexual', 'asexual', 'gender', 'genderstudies'],
+   // lifestyle: ['home', 'garden', 'travel'],
+   // film: ['movies', 'screen', 'screenwriting', 'actor', 'filmdirector'],
+   // music: ['musician', 'guitar', 'instrument', 'singer', 'producer', 'recording', 'audio', 'band', 'arranger', 'compose', 'piano', 'musictheory', 'orchestra', 'sympnony', 'opera', 'filmscore'],
+   // spirituality: ['faith', 'religion', 'belief', 'rabbi', 'priest', 'pastor', 'god', 'church', 'pope', 'deacon', 'elder', 'cardinel'],
+   // outdoors: ['hiking', 'backpacking', 'canoing', 'kayaking', 'mountain', 'foresting', 'forest', 'foraging', 'camping'],
+   // paranormal: ['ghost', 'haunt', 'possesion'],
+   // family: ['kids', 'children', 'husband', 'wife', 'mother', 'father', 'parent', 'grandparent'],
+   // pets: ['dog', 'cat', 'exotic', 'animal', 'veterinary', 'species'],
+   // photography: ['pictures', 'camera', 'photos', 'portrait', 'photographer'],
+   // scifi: [],
+   // social: [],
+   // sports: ['ball', 'athlete', 'workout', 'referee', 'coach', 'player'],
+   javascript: [
+     'javascript',
+     'reactnative',
+     'express',
+     'node',
+     'js',
+     'postgres',
+     'node.js',
+     'postico',
+     'web',
+     'app',
+     'redux',
+     'reactredux',
+     '.js',
+     'webdev',
+     'mobile',
+     'phone',
+     'android',
+     'ios',
+     'css'
+   ],
+   computer: {
+     games: ['video', 'gaming', 'gamer', 'player'],
+     hardware: ['motherboar', 'harddrive', 'repair', 'ram', 'card', 'disk'],
+     networking: ['cable', 'LAN', 'modem', 'router', 'internet'],
+     software: [
+       'programming',
+       'coding',
+       'python',
+       'program',
+       'frontend',
+       'backend',
+       'fullstack',
+       'develop',
+       'developer',
+       'applications',
+       'developing',
+       'engineer',
+       'design',
+       'database',
+       'mongo',
+       'mongodb',
+       'build'
+     ],
+     network: {
+       security: [
+         'firewall',
+         'proxy',
+         'antivirus',
+         'malware',
+         'virus',
+         'infected',
+         'hacker',
+         'attck',
+         'ddos',
+         'xss'
+       ]
+     }
+   }
+   // tech: ['computers', 'programming', 'code', 'coding']
+   // writing: ['author', 'readers', 'articles'],
+ }
+
+
+const build1 = {
   // arts: ['painting', 'drawing', 'scultping', 'pottery', 'music'],
   // books: ['fiction', 'nonfiction', 'novels', 'biography', 'library', 'reading', 'writing'],
   business: [

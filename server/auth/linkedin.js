@@ -35,7 +35,7 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
       const summary = profile._json.summary
       const picUrl = profile._json.pictureUrl
 
-      const apiArray = parser(summary, headline, 4)
+      const apiArray = parser(summary, headline)
       console.log('the parser:', parser)
       console.log('HEY MY API ARRAR', apiArray)
       // console.log(' this is the profile from linkedin', profile._json)
