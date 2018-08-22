@@ -35,7 +35,9 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
       const summary = profile._json.summary
       const picUrl = profile._json.pictureUrl
 
-      const apiArray = parser(summary, headline)
+      const apiArray = parser(summary, headline, 4)
+      console.log('the parser:', parser)
+      console.log('HEY MY API ARRAR', apiArray)
       // console.log(' this is the profile from linkedin', profile._json)
       // console.log('this is the access token:', accessToken)
       // console.log('this is the refreshToken:', refreshToken)
@@ -115,7 +117,7 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
   })
 
 
-  // Redirect the user back to the
+  // Redirect the user back to the app
   router.get('/redirect', async (req, res, next) => {
     res.redirect('exp://8k-xp5.veryspry.evence.exp.direct:80')
   })

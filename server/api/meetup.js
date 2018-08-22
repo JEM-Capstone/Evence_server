@@ -54,10 +54,11 @@ router.get(`/topics/:keyword/:userId`, async (req, res, next) => {
     const {data} = await axios.get(composeRequest(method, qualifiers))
 
     // keep only topic id that have associated group_counts > 50
-    const filteredData = data.filter(item => item.group_count > 2000)
-    console.log(
-      chalk.red('this is our filteredData for groups over 200:', filteredData)
-    )
+    data.forEach(item => console.log(chalk.green('the item:', item)))
+    const filteredData = data.filter(item => item.group_count > 5000)
+
+    console.log(chalk.red('this is our filteredData for groups over 200:', filteredData))
+
     // grab only the ids for the DB
     const topicArray = filteredData.map(item => item.id)
 
