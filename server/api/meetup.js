@@ -22,7 +22,7 @@ const composeRequest = (
   key = '501581a6f6f646d7f155b3b1f165a5d',
   altKey = '7b24331442236f47294c3555e126a75'
 ) => {
-  const request = base + method + '?key=' + altKey + '&sign=true' + qualifiers
+  const request = base + method + '?key=' + key + '&sign=true' + qualifiers
   return request
 }
 
@@ -54,10 +54,11 @@ router.get(`/topics/:keyword/:userId`, async (req, res, next) => {
     const {data} = await axios.get(composeRequest(method, qualifiers))
 
     // keep only topic id that have associated group_counts > 50
-    data.forEach(item => console.log(chalk.green('the item:', item)))
-    const filteredData = data.filter(item => item.group_count > 20)
 
-    console.log(chalk.red('this is our filteredData for groups over 200:', filteredData))
+    const filteredData = data.filter(item => item.group_count > 20)
+    console.log(
+      chalk.red('this is our filteredData for groups over 200:', filteredData)
+    )
 
     // grab only the ids for the DB
     const topicArray = filteredData.map(item => item.id)
@@ -152,8 +153,6 @@ router.get(`/events/:group/:eventId/:userId`, async (req, res, next) => {
     const {data} = await axios.get(composeRequest(method, qualifiers))
 
     const event = await UserEvent.findOrCreate({
-      //TODO: make this findOrCreate using eventId & userId so you don't get duplicates
-
       where: {eventId: data.id},
       defaults: {
         eventName: data.name,
@@ -167,7 +166,7 @@ router.get(`/events/:group/:eventId/:userId`, async (req, res, next) => {
         venueName: data.venue ? data.venue.name : null,
         venueAddress: data.venue ? data.venue.address_1 : null,
         fee: data.fee ? data.fee.amount : null,
-        description: data.description,
+        description: data.plain_text_no_images_description,
         webActions: data.web_actions
           ? [
               data.web_actions.calendar_export_google,
@@ -179,16 +178,12 @@ router.get(`/events/:group/:eventId/:userId`, async (req, res, next) => {
         pastEvents: data.past_event_count_inclusive
           ? data.past_event_count_inclusive
           : null,
-        hosts: data.event_hosts
-          ? data.event_hosts.map(host => [
-              host.name,
-              host.id,
-              host.photo ? host.photo.photo_link : null
-            ])
-          : null,
+        hostNames: data.event_hosts.map(host => host.name),
+        hostPhotos: data.event_hosts.map(
+          host => (host.photo ? host.photo.photo_link : null)
+        ),
         userId: req.params.userId
       }
-
     })
 
     console.log(

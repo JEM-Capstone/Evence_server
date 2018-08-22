@@ -77,7 +77,7 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
         .then(() => {
           done(null, profile)
         })
-        .catch((err) => {
+        .catch(err => {
           done(err)
         })
     }
@@ -90,9 +90,14 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
     res.redirect('/')
   })
   // /auth/linkedin
-  router.get('/', passport.authenticate('linkedin', (err, user, info) => {
-    if (err) { return next(err) }
-  }))
+  router.get(
+    '/',
+    passport.authenticate('linkedin', (err, user, info) => {
+      if (err) {
+        return next(err)
+      }
+    })
+  )
 
   router.get('/me', (req, res, next) => {
     // console.log('login', req)
@@ -107,31 +112,39 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
     })(req, res, next)
   })
 
-  router.get('/callback', passport.authenticate('linkedin', {
+  router.get(
+    '/callback',
+    passport.authenticate('linkedin', {
       // successRedirect: '/auth/linkedin/redirect',
-      successRedirect: 'exp://3i-ear.veryspry.ui.exp.direct:80',
+      successRedirect: 'exp://172.17.21.36:19000',
       failureRedirect: '/auth/linkedin'
-    }), function() {
+    }),
+    function() {
       next()
-    }, async (req, res, next) => {
-  })
-
+    },
+    async (req, res, next) => {}
+  )
 
   // Redirect the user back to the app
   router.get('/redirect', async (req, res, next) => {
-    res.redirect('exp://8k-xp5.veryspry.evence.exp.direct:80')
+    res.redirect('exp://172.17.21.36:19000')
   })
 
   // /auth/linkedin/clientid --> give you the linkedin client id
-  router.get('/clientid', async(req, res, next) => {
-      res.send(process.env.LINKEDIN_CLIENT_ID)
+  router.get('/clientid', async (req, res, next) => {
+    res.send(process.env.LINKEDIN_CLIENT_ID)
   })
   // /auth/linkedin/clientsecret --> gives you the linkedin client secret
-  router.get('/clientsecret', async(req, res, next) => {
+  router.get('/clientsecret', async (req, res, next) => {
     res.send(process.env.LINKEDIN_CLIENT_SECRET)
   })
   // /auth/linkedin/appstate
   router.get('/appstate', (req, res, next) => {
     res.send(process.env.LINKEDIN_APP_STATE)
+  })
+
+  router.get('/user', (req, res, next) => {
+    console.log('in backend', user.id)
+    res.send(user)
   })
 }

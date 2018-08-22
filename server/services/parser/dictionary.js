@@ -139,7 +139,9 @@ const dictionary1 = { business: 'business',
   apollo: 'graphql',
   apolloclient: 'graphql' }
 
-const commonWords = { the: true,
+
+const commonWords = {
+  the: true,
   of: true,
   and: true,
   a: true,
@@ -311,4 +313,4 @@ const commonWords = { the: true,
   daily: true }
 
 
-  module.exports = { dictionary, commonWords }
+module.exports = {dictionary, commonWords}
