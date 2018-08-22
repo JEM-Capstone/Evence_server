@@ -36,6 +36,8 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
       const picUrl = profile._json.pictureUrl
 
       const apiArray = parser(summary, headline)
+      console.log('the parser:', parser)
+      console.log('HEY MY API ARRAR', apiArray)
       // console.log(' this is the profile from linkedin', profile._json)
       // console.log('this is the access token:', accessToken)
       // console.log('this is the refreshToken:', refreshToken)
@@ -123,7 +125,7 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
     async (req, res, next) => {}
   )
 
-  // Redirect the user back to the
+  // Redirect the user back to the app
   router.get('/redirect', async (req, res, next) => {
     res.redirect('exp://172.17.21.36:19000')
   })
