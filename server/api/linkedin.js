@@ -16,7 +16,7 @@ const composeRequest = (
 //api/linkedin/companies by keywords
 router.get('/companies', async (req, res, next) => {
   try {
-    //atticipating an array of keywords from the user found by front end passing back user.id
+    //anticipating an array of keywords from the user found by front end passing back user.id
     const user = User.findById(req.user.id)
     const keywords = user.keywords.join('%20')
     const method = `/search?q=companiesV2&baseSearchParams.keywords=`

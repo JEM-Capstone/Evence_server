@@ -117,6 +117,7 @@ if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_CLIENT_SECRET) {
     passport.authenticate('linkedin', {
       // successRedirect: '/auth/linkedin/redirect',
       successRedirect: 'exp://172.17.21.36:19000',
+      // successRedirect: 'exp://iq-8yb.veryspry.evenceui.exp.direct:80',
       failureRedirect: '/auth/linkedin'
     }),
     function() {

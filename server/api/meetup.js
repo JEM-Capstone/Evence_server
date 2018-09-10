@@ -10,7 +10,6 @@ const chalk = require(`chalk`)
 const axios = require('axios')
 const topicFilter = require('../services/index')
 
-/* for questions about these routes, ask Evelyn */
 
 //NOTE: eventually need to hide the key e.g. fs.readFileSync('api_key.txt', 'utf-8');
 
@@ -19,8 +18,10 @@ const composeRequest = (
   method,
   qualifiers,
   base = 'https://api.meetup.com',
-  key = '501581a6f6f646d7f155b3b1f165a5d',
-  altKey = '7b24331442236f47294c3555e126a75'
+  // key = '501581a6f6f646d7f155b3b1f165a5d',
+  // altKey = '7b24331442236f47294c3555e126a75'
+  key = process.env.MEETUP_CLIENT_ID,
+  altKey = process.env.MEETUP_ALT_CLIENT_ID
 ) => {
   const request = base + method + '?key=' + key + '&sign=true' + qualifiers
   return request
@@ -91,9 +92,9 @@ router.get(`/topics/:keyword/:userId`, async (req, res, next) => {
   }
 })
 
-// api/meetup/groups --> drop table after ...?
+// api/meetup/groups -->
 // we'll need to hit this endpoint multiple times per person, once for each topicId
-// each topidId creates miltiple instances of groups in the userGroups table
+// each topidId creates multiple instances of groups in the userGroups table
 router.get(`/groups/:topicId/:city/:userId`, async (req, res, next) => {
   try {
     const topicId = req.params.topicId //'16325'
